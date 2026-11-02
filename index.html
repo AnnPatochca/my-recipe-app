@@ -99,7 +99,7 @@
       gap: 12px;
     }
     @media (max-width: 980px) {
-      .fridge-panel { position: static; max-height: 480px; }
+      .fridge-panel { position: static; max-height: 500px; }
     }
     .fridge-header { display: flex; justify-content: space-between; align-items: center; }
     .fridge-header h2 { font-size: 1.1rem; font-weight: 700; }
@@ -136,6 +136,9 @@
       margin-bottom: 6px;
       border-bottom: 1px solid var(--border);
       padding-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     .ing-grid { display: flex; flex-wrap: wrap; gap: 6px; }
     .ing-chip {
@@ -188,7 +191,7 @@
     }
     .tab.active { background: #0f172a; color: #fff; border-color: #0f172a; }
 
-    .status-group { margin-bottom: 18px; }
+    .status-group { margin-bottom: 12px; }
     .status-header {
       display: flex;
       align-items: center;
@@ -430,7 +433,7 @@
       <h2 class="modal-title">🛒 Список покупок</h2>
 
       <div style="display:flex; gap:8px; margin-bottom:12px;">
-        <input type="text" id="customCartInput" class="search-input" placeholder="Добавить продукт вручную (например: Молоко)..." onkeydown="if(event.key==='Enter') addCustomCartItem()">
+        <input type="text" id="customCartInput" class="search-input" placeholder="Добавить продукт вручную (например: Молоко 2 пачки)..." onkeydown="if(event.key==='Enter') addCustomCartItem()">
         <button class="btn btn-primary" onclick="addCustomCartItem()">Добавить</button>
       </div>
 
@@ -498,6 +501,44 @@
     // Встроенная ссылка на ваш Google Apps Script
     const API_URL = 'https://script.google.com/macros/s/AKfycbxRisU-cQ-LXtUFrjQLhMVvTdxEGKFoBIuOCtXSCzWXkXlM8Dm38eyQECOajKAxAeRySw/exec';
 
+    // Словарь категорий для умной группировки продуктов в холодильнике
+    const PRODUCT_CATEGORIES = [
+      {
+        name: '🥛 Молочка и яйца',
+        keywords: ['молоко', 'сыр', 'творог', 'сливки', 'сметана', 'масло сливочное', 'сливочное масло', 'кефир', 'йогурт', 'пармезан', 'фета', 'моцарелла', 'яйца', 'яйцо', 'желтки', 'белки', 'брынза', 'ряженка', 'маскарпоне', 'рикотта', 'сырок']
+      },
+      {
+        name: '🥩 Белок (мясо, птица, рыба)',
+        keywords: ['куриц', 'курин', 'индейк', 'говядин', 'свинин', 'фарш', 'бекон', 'ветчин', 'колбас', 'сосиск', 'рыб', 'лосос', 'семг', 'форел', 'тунец', 'креветк', 'кальмар', 'морепродукт', 'мясо', 'филе', 'грудк', 'бедр', 'печень', 'утк', 'кролик', 'мидии', 'краб']
+      },
+      {
+        name: '🥦 Овощи, грибы и зелень',
+        keywords: ['помидор', 'томат', 'черри', 'огур', 'картошк', 'картофел', 'лук', 'чеснок', 'морков', 'перец', 'капуст', 'броккол', 'цветн', 'кабач', 'баклажан', 'шампиньон', 'гриб', 'салат', 'айсберг', 'шпинат', 'зелень', 'укроп', 'петрушк', 'кинз', 'базилик', 'сельдерей', 'свекл', 'редис', 'тыкв', 'горошек', 'кукуруз', 'фасоль', 'авокадо', 'руккола', 'спарж']
+      },
+      {
+        name: '🍎 Фрукты, ягоды и орехи',
+        keywords: ['банан', 'яблок', 'груш', 'лимон', 'лайм', 'апельсин', 'мандарин', 'ягод', 'клубник', 'малин', 'черник', 'голубик', 'вишн', 'черешн', 'персик', 'абрикос', 'слив', 'виноград', 'киви', 'манго', 'ананас', 'изюм', 'чернослив', 'курага', 'финик', 'орех', 'грецк', 'миндал', 'кешью', 'фундук', 'арахис', 'кокос']
+      },
+      {
+        name: '🍝 Крупы, паста и выпечка',
+        keywords: ['овсян', 'хлопья', 'гречк', 'рис', 'спагетти', 'макарон', 'паста', 'вермишел', 'лапш', 'мука', 'хлеб', 'батон', 'лаваш', 'тортилья', 'булк', 'сухар', 'пшен', 'перлов', 'булгур', 'кускус', 'киноа', 'манк', 'чечевиц', 'нут', 'тесто', 'корж', 'печенье']
+      },
+      {
+        name: '🫒 Бакалея, масла и специи',
+        keywords: ['масло растительное', 'растительное масло', 'оливковое масло', 'масло оливковое', 'подсолнечное', 'соль', 'сахар', 'мед', 'мёд', 'специи', 'паприк', 'перец черный', 'орегано', 'ванилин', 'кориц', 'разрыхлитель', 'сода', 'уксус', 'соевый соус', 'соус', 'майонез', 'кетчуп', 'горчиц', 'томатная паста', 'маслин', 'оливк', 'шоколад', 'какао', 'желатин', 'крахмал', 'кунжут']
+      }
+    ];
+
+    function getProductCategory(ingName) {
+      const lower = ingName.toLowerCase().trim();
+      for (const cat of PRODUCT_CATEGORIES) {
+        if (cat.keywords.some(kw => lower.includes(kw))) {
+          return cat.name;
+        }
+      }
+      return '📦 Прочее';
+    }
+
     let recipes = [];
     let fridge = new Set(JSON.parse(localStorage.getItem('my_fridge') || '[]'));
     let cart = JSON.parse(localStorage.getItem('my_cart') || '[]');
@@ -549,7 +590,7 @@
       }
     }
 
-    // 2. Рендер категорий
+    // 2. Рендер категорий рецептов
     function renderCategories() {
       const cats = ['Все', ...new Set(recipes.map(r => r.category))];
       const tabsEl = document.getElementById('categoryTabs');
@@ -566,7 +607,7 @@
       renderRecipes();
     }
 
-    // 3. Рендер холодильника
+    // 3. Рендер холодильника по категориям (Молочка, Белок, Овощи, Фрукты и др.)
     function getAllIngredients() {
       const set = new Set();
       recipes.forEach(r => r.tags.forEach(t => set.add(t)));
@@ -584,18 +625,39 @@
         return;
       }
 
-      listEl.innerHTML = `
-        <div>
-          <div class="ing-cat-title">Все продукты из рецептов (${allIngs.length})</div>
-          <div class="ing-grid">
-            ${allIngs.map(ing => `
-              <div class="ing-chip ${fridge.has(ing) ? 'active' : ''}" onclick="toggleIngredient('${ing.replace(/'/g, "\\'")}')">
-                ${fridge.has(ing) ? '✓ ' : ''}${ing}
-              </div>
-            `).join('')}
+      // Группируем продукты по категориям
+      const grouped = {};
+      PRODUCT_CATEGORIES.forEach(c => grouped[c.name] = []);
+      grouped['📦 Прочее'] = [];
+
+      allIngs.forEach(ing => {
+        const catName = getProductCategory(ing);
+        if (!grouped[catName]) grouped[catName] = [];
+        grouped[catName].push(ing);
+      });
+
+      let html = '';
+      for (const [catName, items] of Object.entries(grouped)) {
+        if (items.length === 0) continue;
+        const selectedInCat = items.filter(i => fridge.has(i)).length;
+        html += `
+          <div>
+            <div class="ing-cat-title">
+              <span>${catName}</span>
+              <span>${selectedInCat}/${items.length}</span>
+            </div>
+            <div class="ing-grid">
+              ${items.map(ing => `
+                <div class="ing-chip ${fridge.has(ing) ? 'active' : ''}" onclick="toggleIngredient('${ing.replace(/'/g, "\\'")}')">
+                  ${fridge.has(ing) ? '✓ ' : ''}${ing}
+                </div>
+              `).join('')}
+            </div>
           </div>
-        </div>
-      `;
+        `;
+      }
+
+      listEl.innerHTML = html;
     }
 
     function toggleIngredient(ing) {
@@ -608,7 +670,7 @@
     }
 
     function selectBaseProducts() {
-      ['яйца', 'молоко', 'сливочное масло', 'растительное масло', 'соль', 'сахар', 'мука', 'лук', 'чеснок', 'специи']
+      ['яйца', 'молоко', 'сливочное масло', 'растительное масло', 'оливковое масло', 'соль', 'сахар', 'мука', 'лук', 'чеснок', 'специи']
         .forEach(i => fridge.add(i));
       renderFridge();
       renderRecipes();
@@ -888,7 +950,6 @@
       };
 
       try {
-        // Отправляем text/plain, чтобы избежать CORS preflight (OPTIONS) ошибки в Google Apps Script
         const response = await fetch(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
