@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Мои Рецепты и Умный Холодильник</title>
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --accent: #10b981;
+      --accent-hover: #059669;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* Шапка */
+    .header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .header-title { font-size: 1.25rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+    .header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+    .btn {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn:hover { background: #f8fafc; border-color: #cbd5e1; }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-cart { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+    .btn-cart:hover { background: #dbeafe; }
+    .cart-badge {
+      background: #2563eb;
+      color: #fff;
+      padding: 1px 7px;
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 24px;
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 24px;
+      align-items: start;
+    }
+    @media (max-width: 980px) {
+      .container { grid-template-columns: 1fr; padding: 12px; }
+      .header { padding: 12px; }
+    }
+
+    /* Панель холодильника */
+    .fridge-panel {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 18px;
+      position: sticky;
+      top: 76px;
+      max-height: calc(100vh - 96px);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    @media (max-width: 980px) {
+      .fridge-panel { position: static; max-height: 480px; }
+    }
+    .fridge-header { display: flex; justify-content: space-between; align-items: center; }
+    .fridge-header h2 { font-size: 1.1rem; font-weight: 700; }
+    .fridge-stats { font-size: 0.8rem; color: var(--accent); font-weight: 700; background: #ecfdf5; padding: 3px 8px; border-radius: 6px; }
+
+    .search-input, .select-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      outline: none;
+      background: #fff;
+    }
+    .search-input:focus, .select-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15); }
+
+    .fridge-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .fridge-actions .btn { flex: 1; justify-content: center; padding: 6px 8px; font-size: 0.75rem; }
+
+    .ing-list {
+      overflow-y: auto;
+      flex: 1;
+      padding-right: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .ing-cat-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 4px;
+    }
+    .ing-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+    .ing-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      font-size: 0.82rem;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s;
+    }
+    .ing-chip:hover { border-color: #cbd5e1; }
+    .ing-chip.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* Правая панель с рецептами */
+    .main-panel { display: flex; flex-direction: column; gap: 20px; }
+    .filters-bar {
+      background: var(--card);
+      padding: 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .filters-top { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .filters-top .search-input { flex: 2; min-width: 220px; }
+    .filters-top .select-input { flex: 1; min-width: 210px; font-weight: 600; color: #334155; }
+
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tab {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tab.active { background: #0f172a; color: #fff; border-color: #0f172a; }
+
+    .status-group { margin-bottom: 18px; }
+    .status-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--border);
+    }
+    .status-badge {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .status-header h3 { font-size: 1.15rem; font-weight: 800; }
+    .status-count { font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+
+    .recipes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+    .recipe-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+    .recipe-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.06);
+      border-color: #cbd5e1;
+    }
+    .recipe-card.ready { border-top: 4px solid var(--accent); }
+    .recipe-card.almost { border-top: 4px solid var(--warn); }
+    .recipe-card.many { border-top: 4px solid var(--danger); }
+
+    .card-top { display: flex; justify-content: space-between; gap: 6px; align-items: center; flex-wrap: wrap; }
+    .card-cat { font-size: 0.7rem; text-transform: uppercase; font-weight: 700; color: var(--muted); background: #f1f5f9; padding: 3px 8px; border-radius: 6px; }
+    .card-badges { display: flex; gap: 6px; align-items: center; }
+    .card-kcal { font-size: 0.75rem; font-weight: 700; background: #fff7ed; color: #c2410c; border: 1px solid #ffedd5; padding: 2px 7px; border-radius: 6px; }
+    .card-match { font-size: 0.75rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; }
+    .match-0 { background: #ecfdf5; color: #047857; }
+    .match-1 { background: #fffbeb; color: #b45309; }
+    .match-many { background: #fef2f2; color: #b91c1c; }
+
+    .card-title { font-size: 1.06rem; font-weight: 700; color: #0f172a; line-height: 1.35; }
+
+    .card-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+    .tag { font-size: 0.74rem; padding: 2px 7px; border-radius: 5px; cursor: pointer; }
+    .tag-have { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+    .tag-miss { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; font-weight: 600; }
+
+    .card-footer { font-size: 0.78rem; color: var(--muted); display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 10px; gap: 8px; }
+    .btn-mini-cart {
+      padding: 4px 9px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      border-radius: 6px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-mini-cart:hover { background: #dbeafe; }
+    .btn-mini-cart.added { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
+
+    /* Модальные окна */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(3px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      padding: 16px;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background: var(--card);
+      border-radius: 16px;
+      max-width: 680px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 24px;
+      position: relative;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: #f1f5f9;
+      border: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-close:hover { background: #e2e8f0; }
+    .modal-cat { font-size: 0.75rem; text-transform: uppercase; color: var(--accent); font-weight: 800; margin-bottom: 4px; }
+    .modal-title { font-size: 1.4rem; font-weight: 800; margin-bottom: 12px; padding-right: 30px; }
+    .modal-section { margin-bottom: 18px; }
+    .modal-section h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 8px; color: #334155; }
+    .modal-raw-ings { background: #f8fafc; padding: 12px 16px; border-radius: 10px; border-left: 4px solid var(--accent); font-size: 0.92rem; margin-bottom: 12px; white-space: pre-line; }
+    .modal-steps { white-space: pre-line; font-size: 0.95rem; color: #1e293b; line-height: 1.6; }
+
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.9rem;
+    }
+
+    /* Стили списка покупок */
+    .cart-list { display: flex; flex-direction: column; gap: 8px; margin: 14px 0; max-height: 45vh; overflow-y: auto; padding-right: 4px; }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      gap: 10px;
+    }
+    .cart-item.checked { opacity: 0.6; background: #f1f5f9; }
+    .cart-item.checked .cart-item-name { text-decoration: line-through; }
+    .cart-item-left { display: flex; align-items: center; gap: 10px; cursor: pointer; flex: 1; }
+    .cart-item-name { font-weight: 700; font-size: 0.92rem; }
+    .cart-item-recipes { font-size: 0.75rem; color: var(--muted); }
+    .cart-del-btn { background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 1rem; padding: 4px; }
+    .cart-del-btn:hover { color: var(--danger); }
+
+    .loader { text-align: center; padding: 40px; color: var(--muted); font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <!-- Верхняя панель -->
+  <header class="header">
+    <div class="header-title">🥗 Умный Холодильник & Рецепты</div>
+    <div class="header-actions">
+      <button class="btn" onclick="loadRecipes()" title="Синхронизировать с таблицей">🔄 Обновить базу</button>
+      <button class="btn btn-cart" onclick="openCartModal()">
+        🛒 Список покупок <span class="cart-badge" id="cartBadge">0</span>
+      </button>
+      <button class="btn btn-primary" onclick="openAddModal()">+ Добавить рецепт</button>
+    </div>
+  </header>
+
+  <!-- Основной контент -->
+  <div class="container">
+    <!-- Левая колонка: Холодильник -->
+    <aside class="fridge-panel">
+      <div class="fridge-header">
+        <h2>🧊 Мой холодильник</h2>
+        <span class="fridge-stats" id="fridgeCount">Выбрано: 0</span>
+      </div>
+      <input type="text" id="ingSearch" class="search-input" placeholder="Найти продукт (например, сыр)..." oninput="renderFridge()">
+      <div class="fridge-actions">
+        <button class="btn" onclick="selectBaseProducts()">Базовый набор</button>
+        <button class="btn" onclick="selectAllProducts()">Выбрать все</button>
+        <button class="btn" style="color:var(--danger);" onclick="clearFridge()">Очистить</button>
+      </div>
+      <div class="ing-list" id="ingList"></div>
+    </aside>
+
+    <!-- Правая колонка: Рецепты -->
+    <main class="main-panel">
+      <div class="filters-bar">
+        <div class="filters-top">
+          <input type="text" id="recipeSearch" class="search-input" placeholder="🔍 Поиск рецепта по названию или ингредиенту..." oninput="renderRecipes()">
+          <select id="sortSelect" class="select-input" onchange="renderRecipes()">
+            <option value="match">Сначала то, что можно приготовить</option>
+            <option value="kcal_asc">По калориям (сначала легкие)</option>
+            <option value="kcal_desc">По калориям (сначала сытные)</option>
+            <option value="title">По алфавиту (А–Я)</option>
+          </select>
+        </div>
+        <div class="tabs" id="categoryTabs"></div>
+      </div>
+
+      <div id="recipesContainer">
+        <div class="loader">⏳ Загружаем рецепты из вашей Google Таблицы...</div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Модальное окно просмотра рецепта -->
+  <div class="modal-backdrop" id="recipeModal" onclick="if(event.target===this) closeRecipeModal()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeRecipeModal()">✕</button>
+      <div class="modal-cat" id="mCat"></div>
+      <h2 class="modal-title" id="mTitle"></h2>
+
+      <div class="modal-section">
+        <h4>Продукты для проверки в холодильнике (кликните, чтобы отметить наличие):</h4>
+        <div class="card-tags" id="mTags"></div>
+      </div>
+
+      <div class="modal-section">
+        <h4>Точный состав, КБЖУ и пропорции по рецепту:</h4>
+        <div class="modal-raw-ings" id="mRawIngs"></div>
+      </div>
+
+      <div class="modal-section">
+        <h4>Приготовление:</h4>
+        <div class="modal-steps" id="mSteps"></div>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); padding-top:14px; margin-top:16px;">
+        <span id="mKcal" style="font-weight:700; color:#c2410c;"></span>
+        <button class="btn btn-cart" id="mAddMissingBtn">🛒 Докупить недостающее</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно списка покупок -->
+  <div class="modal-backdrop" id="cartModal" onclick="if(event.target===this) closeCartModal()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeCartModal()">✕</button>
+      <div class="modal-cat">Корзина</div>
+      <h2 class="modal-title">🛒 Список покупок</h2>
+
+      <div style="display:flex; gap:8px; margin-bottom:12px;">
+        <input type="text" id="customCartInput" class="search-input" placeholder="Добавить продукт вручную (например: Молоко)..." onkeydown="if(event.key==='Enter') addCustomCartItem()">
+        <button class="btn btn-primary" onclick="addCustomCartItem()">Добавить</button>
+      </div>
+
+      <div class="cart-list" id="cartListContainer"></div>
+
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:16px; border-top:1px solid var(--border); padding-top:14px;">
+        <button class="btn btn-primary" onclick="moveBoughtToFridge()">✨ Перенести купленное в холодильник</button>
+        <button class="btn btn-cart" onclick="copyCartToClipboard()">📋 Скопировать список</button>
+        <button class="btn" style="margin-left:auto; color:var(--danger);" onclick="clearCart()">Очистить всё</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно добавления нового рецепта -->
+  <div class="modal-backdrop" id="addModal" onclick="if(event.target===this) closeAddModal()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeAddModal()">✕</button>
+      <div class="modal-cat">База данных Google Sheets</div>
+      <h2 class="modal-title">➕ Новый рецепт</h2>
+
+      <form id="addRecipeForm" onsubmit="submitNewRecipe(event)">
+        <div class="form-group">
+          <label>Название блюда *</label>
+          <input type="text" id="fTitle" required placeholder="Например: Сырники с изюмом">
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+          <div class="form-group">
+            <label>Категория *</label>
+            <input type="text" id="fCategory" list="catSuggestions" required placeholder="Завтраки, Супы, Горячее...">
+            <datalist id="catSuggestions">
+              <option value="Завтраки">
+              <option value="Супы">
+              <option value="Горячее">
+              <option value="Салаты">
+              <option value="Гарниры">
+              <option value="Десерты">
+            </datalist>
+          </div>
+          <div class="form-group">
+            <label>Калорийность (ккал на порцию / 100г)</label>
+            <input type="number" id="fCalories" placeholder="320">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Теги продуктов для холодильника (через запятую) *</label>
+          <input type="text" id="fTags" required placeholder="творог, яйца, мука, сахар, растительное масло">
+        </div>
+        <div class="form-group">
+          <label>Точный состав и пропорции *</label>
+          <textarea id="fIngredients" rows="3" required placeholder="Творог 5% — 400 г, Яйцо — 1 шт., Мука — 3 ст. л."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Шаги приготовления *</label>
+          <textarea id="fSteps" rows="5" required placeholder="1. Разомните творог...&#10;2. Сформируйте сырники..."></textarea>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px;">
+          <button type="button" class="btn" onclick="closeAddModal()">Отмена</button>
+          <button type="submit" class="btn btn-primary" id="saveRecipeBtn">💾 Сохранить в таблицу</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Встроенная ссылка на ваш Google Apps Script
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxRisU-cQ-LXtUFrjQLhMVvTdxEGKFoBIuOCtXSCzWXkXlM8Dm38eyQECOajKAxAeRySw/exec';
+
+    let recipes = [];
+    let fridge = new Set(JSON.parse(localStorage.getItem('my_fridge') || '[]'));
+    let cart = JSON.parse(localStorage.getItem('my_cart') || '[]');
+    let activeCategory = 'Все';
+    let currentModalRecipeId = null;
+
+    function saveFridge() {
+      localStorage.setItem('my_fridge', JSON.stringify([...fridge]));
+      document.getElementById('fridgeCount').textContent = `Выбрано: ${fridge.size}`;
+    }
+
+    function saveCart() {
+      localStorage.setItem('my_cart', JSON.stringify(cart));
+      document.getElementById('cartBadge').textContent = cart.length;
+    }
+
+    // 1. Загрузка рецептов из Google Таблицы (GET)
+    async function loadRecipes() {
+      const container = document.getElementById('recipesContainer');
+      container.innerHTML = '<div class="loader">⏳ Синхронизация с Google Таблицей...</div>';
+      try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+
+        recipes = data
+          .filter(item => item.title && String(item.title).trim() !== '')
+          .map((item, idx) => ({
+            id: String(item.id || 'rec_' + idx),
+            title: String(item.title).trim(),
+            category: String(item.category || 'Разное').trim(),
+            calories: Number(item.calories) || 0,
+            tags: String(item.tags || '')
+              .split(',')
+              .map(t => t.trim().toLowerCase())
+              .filter(Boolean),
+            ingredients: String(item.ingredients || ''),
+            steps: String(item.steps || '')
+          }));
+
+        renderCategories();
+        renderFridge();
+        renderRecipes();
+        saveCart();
+      } catch (err) {
+        console.error('Ошибка загрузки:', err);
+        container.innerHTML = `<div class="loader" style="color:var(--danger);">
+          ❌ Не удалось загрузить рецепты. Проверьте доступ к скрипту (должен быть «Все / Anyone»).
+        </div>`;
+      }
+    }
+
+    // 2. Рендер категорий
+    function renderCategories() {
+      const cats = ['Все', ...new Set(recipes.map(r => r.category))];
+      const tabsEl = document.getElementById('categoryTabs');
+      tabsEl.innerHTML = cats.map(c => `
+        <button class="tab ${c === activeCategory ? 'active' : ''}" onclick="setCategory('${c.replace(/'/g, "\\'")}')">
+          ${c}
+        </button>
+      `).join('');
+    }
+
+    function setCategory(cat) {
+      activeCategory = cat;
+      renderCategories();
+      renderRecipes();
+    }
+
+    // 3. Рендер холодильника
+    function getAllIngredients() {
+      const set = new Set();
+      recipes.forEach(r => r.tags.forEach(t => set.add(t)));
+      return [...set].sort((a, b) => a.localeCompare(b, 'ru'));
+    }
+
+    function renderFridge() {
+      saveFridge();
+      const q = document.getElementById('ingSearch').value.trim().toLowerCase();
+      const allIngs = getAllIngredients().filter(ing => ing.includes(q));
+      const listEl = document.getElementById('ingList');
+
+      if (allIngs.length === 0) {
+        listEl.innerHTML = '<div style="color:var(--muted); font-size:0.85rem;">Продукты не найдены</div>';
+        return;
+      }
+
+      listEl.innerHTML = `
+        <div>
+          <div class="ing-cat-title">Все продукты из рецептов (${allIngs.length})</div>
+          <div class="ing-grid">
+            ${allIngs.map(ing => `
+              <div class="ing-chip ${fridge.has(ing) ? 'active' : ''}" onclick="toggleIngredient('${ing.replace(/'/g, "\\'")}')">
+                ${fridge.has(ing) ? '✓ ' : ''}${ing}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function toggleIngredient(ing) {
+      const norm = ing.toLowerCase().trim();
+      if (fridge.has(norm)) fridge.delete(norm);
+      else fridge.add(norm);
+      renderFridge();
+      renderRecipes();
+      if (currentModalRecipeId) openRecipeModal(currentModalRecipeId);
+    }
+
+    function selectBaseProducts() {
+      ['яйца', 'молоко', 'сливочное масло', 'растительное масло', 'соль', 'сахар', 'мука', 'лук', 'чеснок', 'специи']
+        .forEach(i => fridge.add(i));
+      renderFridge();
+      renderRecipes();
+    }
+
+    function selectAllProducts() {
+      getAllIngredients().forEach(i => fridge.add(i));
+      renderFridge();
+      renderRecipes();
+    }
+
+    function clearFridge() {
+      fridge.clear();
+      renderFridge();
+      renderRecipes();
+    }
+
+    // 4. Рендер карточек рецептов с разбивкой по группам готовности
+    function renderRecipes() {
+      const q = document.getElementById('recipeSearch').value.trim().toLowerCase();
+      const sort = document.getElementById('sortSelect').value;
+      const container = document.getElementById('recipesContainer');
+
+      let filtered = recipes.filter(r => {
+        const matchCat = activeCategory === 'Все' || r.category === activeCategory;
+        const matchQuery = !q || r.title.toLowerCase().includes(q) || r.tags.some(t => t.includes(q)) || r.ingredients.toLowerCase().includes(q);
+        return matchCat && matchQuery;
+      }).map(r => {
+        const have = r.tags.filter(t => fridge.has(t));
+        const miss = r.tags.filter(t => !fridge.has(t));
+        return { ...r, have, miss, missCount: miss.length };
+      });
+
+      if (sort === 'kcal_asc') filtered.sort((a, b) => a.calories - b.calories);
+      else if (sort === 'kcal_desc') filtered.sort((a, b) => b.calories - a.calories);
+      else if (sort === 'title') filtered.sort((a, b) => a.title.localeCompare(b.title, 'ru'));
+      else filtered.sort((a, b) => a.missCount - b.missCount);
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div class="loader">По вашему запросу рецептов не найдено 🔍</div>';
+        return;
+      }
+
+      if (sort !== 'match') {
+        container.innerHTML = `<div class="recipes-grid">${filtered.map(renderCardHTML).join('')}</div>`;
+        return;
+      }
+
+      const ready = filtered.filter(r => r.missCount === 0);
+      const almost = filtered.filter(r => r.missCount > 0 && r.missCount <= 2);
+      const many = filtered.filter(r => r.missCount > 2);
+
+      let html = '';
+      if (ready.length) {
+        html += renderStatusGroup('Можно готовить прямо сейчас', '#10b981', ready);
+      }
+      if (almost.length) {
+        html += renderStatusGroup('Не хватает 1–2 продуктов', '#f59e0b', almost);
+      }
+      if (many.length) {
+        html += renderStatusGroup('Нужно докупить продукты', '#ef4444', many);
+      }
+      container.innerHTML = html;
+    }
+
+    function renderStatusGroup(title, color, list) {
+      return `
+        <div class="status-group">
+          <div class="status-header">
+            <span class="status-badge" style="background:${color}"></span>
+            <h3>${title}</h3>
+            <span class="status-count">(${list.length})</span>
+          </div>
+          <div class="recipes-grid">
+            ${list.map(renderCardHTML).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCardHTML(r) {
+      const statusClass = r.missCount === 0 ? 'ready' : (r.missCount <= 2 ? 'almost' : 'many');
+      const matchClass = r.missCount === 0 ? 'match-0' : (r.missCount <= 2 ? 'match-1' : 'match-many');
+      const matchText = r.missCount === 0 ? 'Все продукты есть!' : `Не хватает: ${r.missCount}`;
+
+      return `
+        <div class="recipe-card ${statusClass}" onclick="openRecipeModal('${r.id}')">
+          <div>
+            <div class="card-top">
+              <span class="card-cat">${r.category}</span>
+              <div class="card-badges">
+                ${r.calories ? `<span class="card-kcal">🔥 ${r.calories} ккал</span>` : ''}
+                <span class="card-match ${matchClass}">${matchText}</span>
+              </div>
+            </div>
+            <div class="card-title" style="margin-top:10px;">${r.title}</div>
+            <div class="card-tags" style="margin-top:10px;">
+              ${r.tags.map(t => `
+                <span class="tag ${fridge.has(t) ? 'tag-have' : 'tag-miss'}">${t}</span>
+              `).join('')}
+            </div>
+          </div>
+          <div class="card-footer">
+            <span>Есть: ${r.have.length} из ${r.tags.length}</span>
+            ${r.missCount > 0 ? `
+              <button class="btn-mini-cart" onclick="event.stopPropagation(); addMissingToCart('${r.id}', this)">
+                + В покупки (${r.missCount})
+              </button>
+            ` : '<span style="color:var(--accent); font-weight:700;">✓ Готово к готовке</span>'}
+          </div>
+        </div>
+      `;
+    }
+
+    // 5. Модальное окно просмотра рецепта
+    function openRecipeModal(id) {
+      const r = recipes.find(item => item.id === id);
+      if (!r) return;
+      currentModalRecipeId = id;
+
+      document.getElementById('mCat').textContent = r.category;
+      document.getElementById('mTitle').textContent = r.title;
+      document.getElementById('mRawIngs').textContent = r.ingredients || 'Не указано';
+      document.getElementById('mSteps').textContent = r.steps || 'Описание шагов отсутствует';
+      document.getElementById('mKcal').textContent = r.calories ? `🔥 Калорийность: ${r.calories} ккал` : '';
+
+      const tagsEl = document.getElementById('mTags');
+      tagsEl.innerHTML = r.tags.map(t => `
+        <span class="tag ${fridge.has(t) ? 'tag-have' : 'tag-miss'}" onclick="toggleIngredient('${t.replace(/'/g, "\\'")}')">
+          ${fridge.has(t) ? '✓ В холодильнике: ' : '+ Нет: '}${t}
+        </span>
+      `).join('');
+
+      const miss = r.tags.filter(t => !fridge.has(t));
+      const btn = document.getElementById('mAddMissingBtn');
+      if (miss.length > 0) {
+        btn.style.display = 'inline-flex';
+        btn.textContent = `🛒 Добавить недостающее в покупки (${miss.length})`;
+        btn.onclick = () => {
+          addMissingToCart(r.id);
+          btn.textContent = '✓ Добавлено в список покупок';
+        };
+      } else {
+        btn.style.display = 'none';
+      }
+
+      document.getElementById('recipeModal').classList.add('open');
+    }
+
+    function closeRecipeModal() {
+      currentModalRecipeId = null;
+      document.getElementById('recipeModal').classList.remove('open');
+    }
+
+    // 6. Логика корзины (Списка покупок)
+    function addMissingToCart(recipeId, btnEl) {
+      const r = recipes.find(item => item.id === recipeId);
+      if (!r) return;
+      const miss = r.tags.filter(t => !fridge.has(t));
+
+      miss.forEach(prod => {
+        const existing = cart.find(c => c.name.toLowerCase() === prod.toLowerCase());
+        if (existing) {
+          if (!existing.recipes.includes(r.title)) existing.recipes.push(r.title);
+        } else {
+          cart.push({ name: prod, checked: false, recipes: [r.title] });
+        }
+      });
+
+      saveCart();
+      if (btnEl) {
+        btnEl.classList.add('added');
+        btnEl.textContent = '✓ В списке';
+      }
+    }
+
+    function openCartModal() {
+      renderCartList();
+      document.getElementById('cartModal').classList.add('open');
+    }
+
+    function closeCartModal() {
+      document.getElementById('cartModal').classList.remove('open');
+    }
+
+    function renderCartList() {
+      const container = document.getElementById('cartListContainer');
+      if (cart.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding:24px; color:var(--muted);">Список покупок пуст 🛒</div>';
+        return;
+      }
+
+      container.innerHTML = cart.map((item, idx) => `
+        <div class="cart-item ${item.checked ? 'checked' : ''}">
+          <div class="cart-item-left" onclick="toggleCartItem(${idx})">
+            <input type="checkbox" ${item.checked ? 'checked' : ''} style="width:18px; height:18px; pointer-events:none;">
+            <div>
+              <div class="cart-item-name">${item.name}</div>
+              ${item.recipes && item.recipes.length ? `<div class="cart-item-recipes">Для: ${item.recipes.join(', ')}</div>` : ''}
+            </div>
+          </div>
+          <button class="cart-del-btn" onclick="removeCartItem(${idx})" title="Удалить">✕</button>
+        </div>
+      `).join('');
+    }
+
+    function addCustomCartItem() {
+      const input = document.getElementById('customCartInput');
+      const val = input.value.trim();
+      if (!val) return;
+      cart.push({ name: val, checked: false, recipes: [] });
+      input.value = '';
+      saveCart();
+      renderCartList();
+    }
+
+    function toggleCartItem(idx) {
+      cart[idx].checked = !cart[idx].checked;
+      saveCart();
+      renderCartList();
+    }
+
+    function removeCartItem(idx) {
+      cart.splice(idx, 1);
+      saveCart();
+      renderCartList();
+    }
+
+    function moveBoughtToFridge() {
+      const bought = cart.filter(c => c.checked);
+      if (bought.length === 0) {
+        alert('Отметьте галочками купленные продукты, чтобы перенести их в холодильник.');
+        return;
+      }
+      bought.forEach(c => fridge.add(c.name.toLowerCase().trim()));
+      cart = cart.filter(c => !c.checked);
+      saveCart();
+      renderCartList();
+      renderFridge();
+      renderRecipes();
+    }
+
+    function copyCartToClipboard() {
+      if (cart.length === 0) return;
+      const text = '🛒 Список покупок:\n' + cart.map(c => `- ${c.name}`).join('\n');
+      navigator.clipboard.writeText(text).then(() => alert('Список скопирован в буфер обмена!'));
+    }
+
+    function clearCart() {
+      cart = [];
+      saveCart();
+      renderCartList();
+    }
+
+    // 7. Отправка нового рецепта в Google Таблицу (POST)
+    function openAddModal() {
+      document.getElementById('addModal').classList.add('open');
+    }
+
+    function closeAddModal() {
+      document.getElementById('addModal').classList.remove('open');
+    }
+
+    async function submitNewRecipe(e) {
+      e.preventDefault();
+      const btn = document.getElementById('saveRecipeBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ Сохраняем в Google Таблицу...';
+
+      const payload = {
+        title: document.getElementById('fTitle').value.trim(),
+        category: document.getElementById('fCategory').value.trim(),
+        calories: Number(document.getElementById('fCalories').value) || 0,
+        tags: document.getElementById('fTags').value.trim().toLowerCase(),
+        ingredients: document.getElementById('fIngredients').value.trim(),
+        steps: document.getElementById('fSteps').value.trim()
+      };
+
+      try {
+        // Отправляем text/plain, чтобы избежать CORS preflight (OPTIONS) ошибки в Google Apps Script
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        if (result.status === 'success') {
+          document.getElementById('addRecipeForm').reset();
+          closeAddModal();
+          await loadRecipes();
+        } else {
+          alert('Ошибка при сохранении: ' + (result.message || 'Неизвестная ошибка'));
+        }
+      } catch (err) {
+        console.error('Ошибка отправки:', err);
+        alert('Не удалось сохранить рецепт. Проверьте интернет или настройки развертывания Apps Script.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '💾 Сохранить в таблицу';
+      }
+    }
+
+    // Запуск при открытии сайта
+    document.addEventListener('DOMContentLoaded', loadRecipes);
+  </script>
+</body>
+</html>
