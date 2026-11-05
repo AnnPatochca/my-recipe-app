@@ -194,215 +194,6 @@
       padding: 16px;
       border-radius: var(--radius);
       border: 1px solid var(--border);
-      display:В обновлённый код `index.html` внесены оба изменения:
-
-1. **Строгий выбор десертов**: для 4-го слота (`🍰 Десерт`) блюда теперь берутся **исключительно из категории «Десерты»** (без примешивания салатов, закусок или завтраков).
-2. **Настройка режима разнообразия продуктов (3 режима в выпадающем списке конструктора)**:
-   * **Режим 1: Экономия и холодильник (как было)** — максимальный приоритет продуктам из холодильника и максимальное пересечение продуктов между днями (минимум новых покупок).
-   * **Режим 2: Баланс (больше разнообразия + общие продукты)** — алгоритм мягче относится к новым продуктам, расширяет выборку блюд (топ-6 вместо топ-3), но сохраняет приятные пересечения ингредиентов между днями.
-   * **Режим 3: Полный рандом (с учётом холодильника)** — блюда не привязываются к продуктам предыдущих дней (каждый день может быть из совершенно разных продуктов), но блюда, для которых в вашем холодильнике уже есть ингредиенты, получают бонус при случайном выборе.
-
-### Полный код `index.html`
-
-Замените содержимое вашего файла `index.html` на GitHub этим кодом:
-
-```html
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Мои Рецепты и Умный Холодильник</title>
-  <style>
-    :root {
-      --bg: #f1f5f9;
-      --card: #ffffff;
-      --text: #0f172a;
-      --muted: #64748b;
-      --border: #e2e8f0;
-      --accent: #10b981;
-      --accent-hover: #059669;
-      --warn: #f59e0b;
-      --danger: #ef4444;
-      --radius: 12px;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-    }
-
-    /* Шапка */
-    .header {
-      background: var(--card);
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      padding: 12px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-    .header-left { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-    .header-title { font-size: 1.25rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
-    .nav-modes {
-      display: flex;
-      background: #f1f5f9;
-      padding: 4px;
-      border-radius: 10px;
-      gap: 4px;
-    }
-    .nav-mode-btn {
-      padding: 6px 14px;
-      border-radius: 7px;
-      border: none;
-      background: transparent;
-      color: var(--muted);
-      font-weight: 700;
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .nav-mode-btn.active {
-      background: var(--card);
-      color: var(--text);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-    }
-
-    .header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-
-    .btn {
-      padding: 8px 14px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: var(--text);
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 0.85rem;
-      transition: all 0.15s;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .btn:hover { background: #f8fafc; border-color: #cbd5e1; }
-    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
-    .btn-primary:hover { background: var(--accent-hover); }
-    .btn-cart { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
-    .btn-cart:hover { background: #dbeafe; }
-    .cart-badge {
-      background: #2563eb;
-      color: #fff;
-      padding: 1px 7px;
-      border-radius: 99px;
-      font-size: 0.75rem;
-      font-weight: 700;
-    }
-
-    .container {
-      display: grid;
-      grid-template-columns: 380px 1fr;
-      gap: 24px;
-      max-width: 1600px;
-      margin: 0 auto;
-      padding: 24px;
-      align-items: start;
-    }
-    @media (max-width: 980px) {
-      .container { grid-template-columns: 1fr; padding: 12px; }
-      .header { padding: 12px; }
-    }
-
-    /* Панель холодильника */
-    .fridge-panel {
-      background: var(--card);
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      padding: 18px;
-      position: sticky;
-      top: 76px;
-      max-height: calc(100vh - 96px);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    @media (max-width: 980px) {
-      .fridge-panel { position: static; max-height: 500px; }
-    }
-    .fridge-header { display: flex; justify-content: space-between; align-items: center; }
-    .fridge-header h2 { font-size: 1.1rem; font-weight: 700; }
-    .fridge-stats { font-size: 0.8rem; color: var(--accent); font-weight: 700; background: #ecfdf5; padding: 3px 8px; border-radius: 6px; }
-
-    .search-input, .select-input {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 0.9rem;
-      outline: none;
-      background: #fff;
-    }
-    .search-input:focus, .select-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15); }
-
-    .fridge-actions { display: flex; gap: 6px; flex-wrap: wrap; }
-    .fridge-actions .btn { flex: 1; justify-content: center; padding: 6px 8px; font-size: 0.75rem; }
-
-    .ing-list {
-      overflow-y: auto;
-      flex: 1;
-      padding-right: 4px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-    .ing-cat-title {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--muted);
-      font-weight: 700;
-      margin-bottom: 6px;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 4px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .ing-grid { display: flex; flex-wrap: wrap; gap: 6px; }
-    .ing-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 10px;
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      background: #f8fafc;
-      font-size: 0.82rem;
-      cursor: pointer;
-      user-select: none;
-      transition: all 0.15s;
-    }
-    .ing-chip:hover { border-color: #cbd5e1; }
-    .ing-chip.active {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-      font-weight: 500;
-    }
-
-    /* Правая панель с рецептами */
-    .main-panel { display: flex; flex-direction: column; gap: 20px; }
-    .filters-bar {
-      background: var(--card);
-      padding: 16px;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -502,7 +293,7 @@
     .btn-mini-cart:hover { background: #dbeafe; }
     .btn-mini-cart.added { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
 
-    /* ================= КОНСТРУКТОР РАЦИОНА (MEAL PLANNER) ================= */
+    /* Конструктор рациона */
     .planner-controls {
       background: var(--card);
       padding: 18px;
@@ -671,6 +462,7 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      cursor: pointer;
     }
     .summary-chip-count {
       background: rgba(0,0,0,0.08);
@@ -849,7 +641,7 @@
           </div>
         </div>
         <div class="planner-hint" id="plannerModeHint">
-          💡 <strong>Режим 1 (Экономия):</strong> блюда разные, но алгоритм прежде всего берет продукты из вашего холодильника и старается максимально пересекать ингредиенты между днями. Десерты выбираются строго из категории <strong>«Десерты»</strong> с автоподбором порции!
+          💡 <strong>Режим 1 (Экономия):</strong> блюда разные, но продукты берутся прежде всего из вашего холодильника и максимально повторяются между днями. Десерты выбираются строго из категории <strong>«Десерты»</strong>.
         </div>
       </div>
 
@@ -964,7 +756,28 @@
   </div>
 
   <script>
-    const API_URL = '[https://script.google.com/macros/s/AKfycbxRisU-cQ-LXtUFrjQLhMVvTdxEGKFoBIuOCtXSCzWXkXlM8Dm38eyQECOajKAxAeRySw/exec](https://script.google.com/macros/s/AKfycbxRisU-cQ-LXtUFrjQLhMVvTdxEGKFoBIuOCtXSCzWXkXlM8Dm38eyQECOajKAxAeRySw/exec)';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxRisU-cQ-LXtUFrjQLhMVvTdxEGKFoBIuOCtXSCzWXkXlM8Dm38eyQECOajKAxAeRySw/exec';
+
+    // Универсальное чтение полей из строки Google Таблицы (поддерживает и английские, и русские заголовки)
+    function pickField(item, keys) {
+      if (!item || typeof item !== 'object') return '';
+      for (const k of keys) {
+        if (item[k] !== undefined && item[k] !== null && String(item[k]).trim() !== '') {
+          return item[k];
+        }
+      }
+      const lowerMap = {};
+      Object.keys(item).forEach(origKey => {
+        lowerMap[origKey.trim().toLowerCase()] = item[origKey];
+      });
+      for (const k of keys) {
+        const val = lowerMap[k.toLowerCase()];
+        if (val !== undefined && val !== null && String(val).trim() !== '') {
+          return val;
+        }
+      }
+      return '';
+    }
 
     // 1. УМНАЯ НОРМАЛИЗАЦИЯ ПРОДУКТОВ (объединение синонимов, форм слов и буквы Ё -> Е)
     function canonicalizeTag(raw) {
@@ -1187,11 +1000,9 @@
     let currentModalRecipeId = null;
     let appMode = 'catalog';
 
-    // Состояние конструктора рациона
     let mealPlan = JSON.parse(localStorage.getItem('my_meal_plan') || 'null');
     const PORTION_STEPS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2];
 
-    // Десерт берется СТРОГО из категории «Десерты»
     const MEAL_SLOTS = [
       { key: 'breakfast', label: '🌅 Завтрак', ratio: 0.26, preferredCats: ['Завтраки'] },
       { key: 'lunch',     label: '🍲 Обед',    ratio: 0.34, preferredCats: ['Супы', 'Горячее', 'Боулы', 'Гарниры'] },
@@ -1199,29 +1010,28 @@
       { key: 'snack',     label: '🍰 Десерт',  ratio: 0.15, preferredCats: ['Десерты'] }
     ];
 
-    // Конфигурация 3 режимов разнообразия продуктов
     const VARIETY_MODES = {
       strict: {
-        sharedWeight: 4.0,     // Сильное притяжение к продуктам других дней
-        fridgeWeight: 3.5,     // Сильный приоритет холодильнику
-        missingPenalty: -1.6,  // Штраф за новые продукты, которых нет дома
+        sharedWeight: 4.0,
+        fridgeWeight: 3.5,
+        missingPenalty: -1.6,
         randomSpread: 3.5,
         topN: 3,
         hint: '💡 <strong>Режим 1 (Экономия):</strong> блюда разные, но продукты берутся прежде всего из вашего холодильника и максимально повторяются между днями. Десерты выбираются строго из категории <strong>«Десерты»</strong>.'
       },
       balanced: {
-        sharedWeight: 1.8,     // Умеренное совпадение между днями
-        fridgeWeight: 2.2,     // Умеренный бонус за холодильник
-        missingPenalty: -0.4,  // Мягкое отношение к новым продуктам для разнообразия
+        sharedWeight: 1.8,
+        fridgeWeight: 2.2,
+        missingPenalty: -0.4,
         randomSpread: 6.5,
         topN: 6,
         hint: '💡 <strong>Режим 2 (Больше разнообразия продуктов):</strong> меню включает больше новых и разнообразных ингредиентов, но сохраняет разумные пересечения продуктов между днями. Десерты берутся строго из <strong>«Десертов»</strong>.'
       },
       random: {
-        sharedWeight: 0.0,     // Дни не привязаны друг к другу по продуктам
-        fridgeWeight: 2.8,     // Учитываем холодильник, но выбираем широко
-        missingPenalty: 0.0,   // Нет штрафа за новые продукты
-        randomSpread: 16.0,    // Высокий фактор случайности
+        sharedWeight: 0.0,
+        fridgeWeight: 2.8,
+        missingPenalty: 0.0,
+        randomSpread: 16.0,
         topN: 12,
         hint: '💡 <strong>Режим 3 (Полный рандом с учётом холодильника):</strong> максимальный полёт фантазии! Дни не зависят друг от друга по продуктам, но блюда с продуктами из вашего холодильника имеют повышенный шанс выпадения.'
       }
@@ -1269,43 +1079,64 @@
       const container = document.getElementById('recipesContainer');
       container.innerHTML = '<div class="loader">⏳ Синхронизация с Google Таблицей...</div>';
       try {
-        const res = await fetch(API_URL);
-        const data = await res.json();
+        const res = await fetch(API_URL, { redirect: 'follow' });
+        const rawText = await res.text();
+        let data;
+        try {
+          data = JSON.parse(rawText);
+        } catch (jsonErr) {
+          throw new Error('Ответ от скрипта не является JSON. Убедитесь, что доступ к развертыванию открыт для «Всех» (Anyone).');
+        }
 
-        recipes = data
-          .filter(item => item.title && String(item.title).trim() !== '')
+        const list = Array.isArray(data) ? data : (data.data || data.recipes || []);
+
+        recipes = list
           .map((item, idx) => {
-            const rawTags = String(item.tags || '')
+            const titleVal = pickField(item, ['title', 'название', 'блюдо', 'name']);
+            const catVal = pickField(item, ['category', 'категория', 'тип']);
+            const calVal = pickField(item, ['calories', 'калории', 'ккал', 'калорийность']);
+            const tagsVal = pickField(item, ['tags', 'теги', 'продукты', 'теги (продукты)']);
+            const ingsVal = pickField(item, ['ingredients', 'ингредиенты', 'ингредиенты (текст)', 'состав']);
+            const stepsVal = pickField(item, ['steps', 'шаги', 'шаги приготовления', 'приготовление', 'рецепт']);
+            const idVal = pickField(item, ['id', 'код']) || ('rec_' + idx);
+
+            const rawTags = String(tagsVal || '')
               .split(',')
               .map(t => t.trim())
               .filter(Boolean);
 
             const canonicalTags = [...new Set(rawTags.map(canonicalizeTag).filter(Boolean))];
+            const parsedCalories = parseInt(String(calVal).replace(/[^\d]/g, ''), 10) || 280;
 
             return {
-              id: String(item.id || 'rec_' + idx),
-              title: String(item.title).trim(),
-              category: normalizeRecipeCategory(item.category),
-              calories: Number(item.calories) || 280,
+              id: String(idVal),
+              title: String(titleVal || '').trim(),
+              category: normalizeRecipeCategory(catVal),
+              calories: parsedCalories,
               tags: canonicalTags,
               rawTags: rawTags,
-              ingredients: String(item.ingredients || ''),
-              steps: String(item.steps || '')
+              ingredients: String(ingsVal || ''),
+              steps: String(stepsVal || '')
             };
-          });
+          })
+          .filter(r => r.title !== '');
 
         renderCategories();
         renderFridge();
         renderRecipes();
         saveCart();
+
         if (appMode === 'planner') {
-          if (!mealPlan) generateMealPlan(false);
-          else renderMealPlan();
+          if (!mealPlan || !mealPlan.days || mealPlan.days.length === 0) {
+            generateMealPlan(false);
+          } else {
+            renderMealPlan();
+          }
         }
       } catch (err) {
         console.error('Ошибка загрузки:', err);
         container.innerHTML = `<div class="loader" style="color:var(--danger);">
-          ❌ Не удалось загрузить рецепты. Проверьте подключение или настройки скрипта.
+          ❌ Не удалось загрузить рецепты: ${err.message}
         </div>`;
       }
     }
@@ -1313,7 +1144,6 @@
     // ================= ЛОГИКА УМНОГО КОНСТРУКТОРА РАЦИОНА =================
     function getPoolForSlot(slotKey) {
       const slotDef = MEAL_SLOTS.find(s => s.key === slotKey);
-      // Для десерта берем СТРОГО рецепты из категории «Десерты»
       let pool = recipes.filter(r => slotDef.preferredCats.includes(r.category));
       if (pool.length === 0 && slotKey !== 'snack') {
         pool = [...recipes];
@@ -1324,7 +1154,7 @@
     function pickBestPortion(recipeKcal, targetSlotKcal, slotKey) {
       if (!recipeKcal || recipeKcal <= 0) return 1;
       const allowedSteps = slotKey === 'snack'
-        ? [0.25, 0.5, 0.75, 1] // Для десертов охотно уменьшаем порцию
+        ? [0.25, 0.5, 0.75, 1]
         : [0.5, 0.75, 1, 1.25, 1.5];
 
       let bestStep = 1;
@@ -1344,7 +1174,7 @@
       const targetKcal = Number(document.getElementById('planTargetKcal').value) || 1600;
       const varietyMode = document.getElementById('planVarietySelect').value || 'strict';
 
-      if (!mealPlan) {
+      if (!mealPlan || !mealPlan.days) {
         generateMealPlan(false);
         return;
       }
@@ -1374,33 +1204,23 @@
     function scoreCandidateRecipe(r, slotKey, targetSlotKcal, planIngredients, usedRecipeCounts, prevDayRecipeId, poolLength, modeCfg) {
       let score = 0;
 
-      // 1. Оценка продуктов по выбранному режиму (1: Экономия, 2: Баланс, 3: Рандом с холодильником)
       r.tags.forEach(t => {
         const inFridge = fridge.has(t);
         const inPlan = planIngredients.has(t);
 
-        if (inFridge) {
-          score += modeCfg.fridgeWeight;
-        }
-        if (inPlan) {
-          score += modeCfg.sharedWeight;
-        }
-        if (!inFridge && !inPlan) {
-          score += modeCfg.missingPenalty;
-        }
+        if (inFridge) score += modeCfg.fridgeWeight;
+        if (inPlan) score += modeCfg.sharedWeight;
+        if (!inFridge && !inPlan) score += modeCfg.missingPenalty;
       });
 
-      // 2. Разнообразие блюд (штраф за повторы одного и того же рецепта)
       const timesUsed = usedRecipeCounts[r.id] || 0;
       if (r.id === prevDayRecipeId && poolLength > 1) score -= 30;
       score -= timesUsed * 10;
 
-      // 3. Соответствие целевой калорийности слота с учетом умного масштабирования порции
       const bestPortion = pickBestPortion(r.calories, targetSlotKcal, slotKey);
       const kcalDiff = Math.abs((r.calories * bestPortion) - targetSlotKcal);
       score -= (kcalDiff / 130);
 
-      // 4. Случайный разброс в зависимости от режима
       score += Math.random() * modeCfg.randomSpread;
 
       return { recipe: r, score, bestPortion };
@@ -1427,7 +1247,6 @@
         MEAL_SLOTS.forEach(slot => {
           const prevCell = existingDay && existingDay.meals ? existingDay.meals[slot.key] : null;
           const prevRec = prevCell ? recipes.find(r => r.id === prevCell.recipeId) : null;
-          // Проверяем, что закрепленный десерт действительно из категории Десерты
           const validCategory = prevRec && (slot.key !== 'snack' || prevRec.category === 'Десерты');
 
           if (prevCell && prevCell.pinned && validCategory) {
@@ -1442,7 +1261,6 @@
         newDays.push({ dayNumber: d + 1, meals: mealsObj });
       }
 
-      // Заполняем все незакрепленные слоты
       for (let d = 0; d < daysCount; d++) {
         const prevDay = d > 0 ? newDays[d - 1] : null;
 
@@ -1485,7 +1303,6 @@
       renderMealPlan();
     }
 
-    // Замена одного конкретного блюда в рационе
     function rerollSingleSlot(dayIdx, slotKey) {
       if (!mealPlan || !mealPlan.days[dayIdx]) return;
       const currentCell = mealPlan.days[dayIdx].meals[slotKey];
@@ -1647,7 +1464,6 @@
 
       daysContainer.innerHTML = daysHTML;
 
-      // Рендер сводки продуктов под весь рацион
       const allPlanTags = Object.keys(ingUsageMap).sort((a, b) => ingUsageMap[b].count - ingUsageMap[a].count);
       const missingTags = allPlanTags.filter(t => !fridge.has(t));
       const haveTags = allPlanTags.filter(t => fridge.has(t));
@@ -2082,13 +1898,21 @@
       btn.disabled = true;
       btn.textContent = '⏳ Сохраняем в Google Таблицу...';
 
+      const tVal = document.getElementById('fTitle').value.trim();
+      const cVal = normalizeRecipeCategory(document.getElementById('fCategory').value);
+      const calVal = Number(document.getElementById('fCalories').value) || 0;
+      const tagsVal = document.getElementById('fTags').value.trim().toLowerCase();
+      const ingsVal = document.getElementById('fIngredients').value.trim();
+      const stepsVal = document.getElementById('fSteps').value.trim();
+
+      // Передаем и английские, и русские ключи, чтобы запись сработала при любой шапке таблицы
       const payload = {
-        title: document.getElementById('fTitle').value.trim(),
-        category: normalizeRecipeCategory(document.getElementById('fCategory').value),
-        calories: Number(document.getElementById('fCalories').value) || 0,
-        tags: document.getElementById('fTags').value.trim().toLowerCase(),
-        ingredients: document.getElementById('fIngredients').value.trim(),
-        steps: document.getElementById('fSteps').value.trim()
+        title: tVal, 'Название': tVal,
+        category: cVal, 'Категория': cVal,
+        calories: calVal, 'Калории': calVal,
+        tags: tagsVal, 'Теги': tagsVal, 'Теги (продукты)': tagsVal,
+        ingredients: ingsVal, 'Ингредиенты': ingsVal, 'Ингредиенты (текст)': ingsVal,
+        steps: stepsVal, 'Шаги': stepsVal, 'Шаги приготовления': stepsVal
       };
 
       try {
