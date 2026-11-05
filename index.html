@@ -39,7 +39,32 @@
       flex-wrap: wrap;
       gap: 12px;
     }
+    .header-left { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
     .header-title { font-size: 1.25rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+    .nav-modes {
+      display: flex;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: 10px;
+      gap: 4px;
+    }
+    .nav-mode-btn {
+      padding: 6px 14px;
+      border-radius: 7px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .nav-mode-btn.active {
+      background: var(--card);
+      color: var(--text);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
     .header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 
     .btn {
@@ -73,7 +98,7 @@
 
     .container {
       display: grid;
-      grid-template-columns: 360px 1fr;
+      grid-template-columns: 380px 1fr;
       gap: 24px;
       max-width: 1600px;
       margin: 0 auto;
@@ -268,6 +293,184 @@
     .btn-mini-cart:hover { background: #dbeafe; }
     .btn-mini-cart.added { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
 
+    /* ================= КОНСТРУКТОР РАЦИОНА (MEAL PLANNER) ================= */
+    .planner-controls {
+      background: var(--card);
+      padding: 18px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .planner-settings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      align-items: end;
+    }
+    .planner-field label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+    .planner-hint {
+      font-size: 0.82rem;
+      color: var(--muted);
+      background: #f8fafc;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border-left: 4px solid var(--accent);
+    }
+
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 18px;
+    }
+    .day-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+    .day-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border);
+    }
+    .day-title { font-size: 1.1rem; font-weight: 800; color: var(--text); }
+    .day-kcal-badge {
+      font-size: 0.8rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+    .kcal-ok { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+    .kcal-warn { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+
+    .meal-slot {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: border-color 0.15s;
+    }
+    .meal-slot.pinned {
+      background: #f0fdf4;
+      border-color: #86efac;
+    }
+    .meal-slot-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+    .meal-type-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+    .meal-slot-actions { display: flex; gap: 4px; align-items: center; }
+    .icon-btn {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.15s;
+    }
+    .icon-btn:hover { background: #f1f5f9; border-color: #cbd5e1; }
+    .icon-btn.active-pin { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    .meal-recipe-title {
+      font-size: 0.96rem;
+      font-weight: 700;
+      color: var(--text);
+      cursor: pointer;
+      line-height: 1.3;
+    }
+    .meal-recipe-title:hover { color: var(--accent-hover); text-decoration: underline; }
+
+    .meal-portion-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding-top: 6px;
+      border-top: 1px dashed var(--border);
+    }
+    .portion-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2px 6px;
+    }
+    .portion-btn {
+      background: none;
+      border: none;
+      font-weight: 800;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: var(--text);
+      padding: 0 4px;
+    }
+    .portion-btn:hover { color: var(--accent); }
+    .portion-val { font-size: 0.78rem; font-weight: 700; min-width: 62px; text-align: center; }
+    .meal-kcal-info { font-size: 0.8rem; font-weight: 700; color: #c2410c; }
+
+    .planner-summary-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .summary-ing-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .summary-chip {
+      font-size: 0.82rem;
+      padding: 5px 10px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .summary-chip-count {
+      background: rgba(0,0,0,0.08);
+      padding: 1px 6px;
+      border-radius: 99px;
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+
     /* Модальные окна */
     .modal-backdrop {
       position: fixed;
@@ -348,7 +551,13 @@
 
   <!-- Верхняя панель -->
   <header class="header">
-    <div class="header-title">🥗 Умный Холодильник & Рецепты</div>
+    <div class="header-left">
+      <div class="header-title">🥗 Умный Холодильник</div>
+      <div class="nav-modes">
+        <button class="nav-mode-btn active" id="modeCatalogBtn" onclick="switchAppMode('catalog')">📖 Каталог рецептов</button>
+        <button class="nav-mode-btn" id="modePlannerBtn" onclick="switchAppMode('planner')">📅 Конструктор рациона</button>
+      </div>
+    </div>
     <div class="header-actions">
       <button class="btn" onclick="loadRecipes()" title="Синхронизировать с таблицей">🔄 Обновить базу</button>
       <button class="btn btn-cart" onclick="openCartModal()">
@@ -366,7 +575,7 @@
         <h2>🧊 Мой холодильник</h2>
         <span class="fridge-stats" id="fridgeCount">Выбрано: 0</span>
       </div>
-      <input type="text" id="ingSearch" class="search-input" placeholder="Найти продукт (например, сыр)..." oninput="renderFridge()">
+      <input type="text" id="ingSearch" class="search-input" placeholder="Найти продукт (например, йогурт, сыр)..." oninput="renderFridge()">
       <div class="fridge-actions">
         <button class="btn" onclick="selectBaseProducts()">Базовый набор</button>
         <button class="btn" onclick="selectAllProducts()">Выбрать все</button>
@@ -375,8 +584,8 @@
       <div class="ing-list" id="ingList"></div>
     </aside>
 
-    <!-- Правая колонка: Рецепты -->
-    <main class="main-panel">
+    <!-- Правая колонка: Режим 1 — Каталог рецептов -->
+    <main class="main-panel" id="catalogView">
       <div class="filters-bar">
         <div class="filters-top">
           <input type="text" id="recipeSearch" class="search-input" placeholder="🔍 Поиск рецепта по названию или ингредиенту..." oninput="renderRecipes()">
@@ -393,6 +602,43 @@
       <div id="recipesContainer">
         <div class="loader">⏳ Загружаем рецепты из вашей Google Таблицы...</div>
       </div>
+    </main>
+
+    <!-- Правая колонка: Режим 2 — Конструктор рациона -->
+    <main class="main-panel" id="plannerView" style="display:none;">
+      <div class="planner-controls">
+        <div class="planner-settings-grid">
+          <div class="planner-field">
+            <label>Количество дней</label>
+            <select id="planDaysSelect" class="select-input" onchange="onPlannerSettingsChange()">
+              <option value="2">2 дня</option>
+              <option value="3" selected>3 дня (оптимально по продуктам)</option>
+              <option value="4">4 дня</option>
+              <option value="5">5 дней (будни)</option>
+              <option value="7">7 дней (неделя)</option>
+            </select>
+          </div>
+          <div class="planner-field">
+            <label>Цель по калориям в день (ккал)</label>
+            <input type="number" id="planTargetKcal" class="search-input" value="1600" step="50" min="800" max="4500" onchange="onPlannerSettingsChange()">
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-primary" style="flex:1; justify-content:center; padding:10px 16px;" onclick="generateMealPlan(false)">
+              🎲 Пересобрать рацион
+            </button>
+            <button class="btn" title="Сбросить все закрепления и собрать заново" onclick="generateMealPlan(true)">
+              Сбросить 📌
+            </button>
+          </div>
+        </div>
+        <div class="planner-hint">
+          💡 <strong>Как это работает:</strong> генератор подбирает <strong>Завтрак, Обед, Ужин и Перекус/Десерт</strong> так, чтобы продукты из холодильника и между днями максимально пересекались (никаких остатков по полпачки!), но сами блюда были разнообразными. Если десерт или блюдо слишком калорийное, умный алгоритм автоматически уменьшит порцию (например, до <strong>0.5</strong> или <strong>0.75</strong>), либо вы можете подкрутить порцию вручную кнопками <strong>«– / +»</strong>.
+        </div>
+      </div>
+
+      <div class="days-grid" id="plannerDaysContainer"></div>
+
+      <div class="planner-summary-card" id="plannerSummaryContainer"></div>
     </main>
   </div>
 
@@ -470,10 +716,13 @@
               <option value="Салаты">
               <option value="Гарниры">
               <option value="Десерты">
+              <option value="Боулы">
+              <option value="Закуски">
+              <option value="Соусы">
             </datalist>
           </div>
           <div class="form-group">
-            <label>Калорийность (ккал на порцию / 100г)</label>
+            <label>Калорийность (ккал на 1 порцию)</label>
             <input type="number" id="fCalories" placeholder="320">
           </div>
         </div>
@@ -482,8 +731,8 @@
           <input type="text" id="fTags" required placeholder="творог, яйца, мука, сахар, растительное масло">
         </div>
         <div class="form-group">
-          <label>Точный состав и пропорции *</label>
-          <textarea id="fIngredients" rows="3" required placeholder="Творог 5% — 400 г, Яйцо — 1 шт., Мука — 3 ст. л."></textarea>
+          <label>Точный состав, бренды и пропорции *</label>
+          <textarea id="fIngredients" rows="3" required placeholder="Творог мягкий 5% — 400 г, Йогурт TEOS — 100 г, Яйцо — 1 шт."></textarea>
         </div>
         <div class="form-group">
           <label>Шаги приготовления *</label>
@@ -498,52 +747,255 @@
   </div>
 
   <script>
-    // Встроенная ссылка на ваш Google Apps Script
     const API_URL = 'https://script.google.com/macros/s/AKfycbxRisU-cQ-LXtUFrjQLhMVvTdxEGKFoBIuOCtXSCzWXkXlM8Dm38eyQECOajKAxAeRySw/exec';
 
-    // Словарь категорий для умной группировки продуктов в холодильнике
-    const PRODUCT_CATEGORIES = [
-      {
-        name: '🥛 Молочка и яйца',
-        keywords: ['молоко', 'сыр', 'творог', 'сливки', 'сметана', 'масло сливочное', 'сливочное масло', 'кефир', 'йогурт', 'пармезан', 'фета', 'моцарелла', 'яйца', 'яйцо', 'желтки', 'белки', 'брынза', 'ряженка', 'маскарпоне', 'рикотта', 'сырок']
-      },
-      {
-        name: '🥩 Белок (мясо, птица, рыба)',
-        keywords: ['куриц', 'курин', 'индейк', 'говядин', 'свинин', 'фарш', 'бекон', 'ветчин', 'колбас', 'сосиск', 'рыб', 'лосос', 'семг', 'форел', 'тунец', 'креветк', 'кальмар', 'морепродукт', 'мясо', 'филе', 'грудк', 'бедр', 'печень', 'утк', 'кролик', 'мидии', 'краб']
-      },
-      {
-        name: '🥦 Овощи, грибы и зелень',
-        keywords: ['помидор', 'томат', 'черри', 'огур', 'картошк', 'картофел', 'лук', 'чеснок', 'морков', 'перец', 'капуст', 'броккол', 'цветн', 'кабач', 'баклажан', 'шампиньон', 'гриб', 'салат', 'айсберг', 'шпинат', 'зелень', 'укроп', 'петрушк', 'кинз', 'базилик', 'сельдерей', 'свекл', 'редис', 'тыкв', 'горошек', 'кукуруз', 'фасоль', 'авокадо', 'руккола', 'спарж']
-      },
-      {
-        name: '🍎 Фрукты, ягоды и орехи',
-        keywords: ['банан', 'яблок', 'груш', 'лимон', 'лайм', 'апельсин', 'мандарин', 'ягод', 'клубник', 'малин', 'черник', 'голубик', 'вишн', 'черешн', 'персик', 'абрикос', 'слив', 'виноград', 'киви', 'манго', 'ананас', 'изюм', 'чернослив', 'курага', 'финик', 'орех', 'грецк', 'миндал', 'кешью', 'фундук', 'арахис', 'кокос']
-      },
-      {
-        name: '🍝 Крупы, паста и выпечка',
-        keywords: ['овсян', 'хлопья', 'гречк', 'рис', 'спагетти', 'макарон', 'паста', 'вермишел', 'лапш', 'мука', 'хлеб', 'батон', 'лаваш', 'тортилья', 'булк', 'сухар', 'пшен', 'перлов', 'булгур', 'кускус', 'киноа', 'манк', 'чечевиц', 'нут', 'тесто', 'корж', 'печенье']
-      },
-      {
-        name: '🫒 Бакалея, масла и специи',
-        keywords: ['масло растительное', 'растительное масло', 'оливковое масло', 'масло оливковое', 'подсолнечное', 'соль', 'сахар', 'мед', 'мёд', 'специи', 'паприк', 'перец черный', 'орегано', 'ванилин', 'кориц', 'разрыхлитель', 'сода', 'уксус', 'соевый соус', 'соус', 'майонез', 'кетчуп', 'горчиц', 'томатная паста', 'маслин', 'оливк', 'шоколад', 'какао', 'желатин', 'крахмал', 'кунжут']
-      }
+    // 1. УМНАЯ НОРМАЛИЗАЦИЯ ПРОДУКТОВ (объединение синонимов, форм слов и буквы Ё -> Е)
+    function canonicalizeTag(raw) {
+      if (!raw) return '';
+      let s = String(raw).toLowerCase().replace(/ё/g, 'е').replace(/\s+/g, ' ').trim();
+      if (!s) return '';
+
+      if (s === 'овощи' || s === 'приправы' || s === 'пряности') return 'специи';
+
+      // --- МОЛОЧКА И ЯЙЦА ---
+      if (s.includes('йогурт')) return 'йогурт';
+      if (s.includes('творог')) return 'творог';
+      if (s === 'крем-чиз' || s === 'крем чиз' || s.includes('творожный сыр') || s.includes('сливочный сыр')) return 'творожный сыр';
+      if (s.includes('дор-блю') || s.includes('дорблю') || s.includes('сыр с плесенью') || s.includes('голубой сыр')) return 'сыр с голубой плесенью';
+      if (s.includes('фета') || s.includes('фетакса') || s.includes('брынза')) return 'фета';
+      if (s.includes('пармезан')) return 'пармезан';
+      if (s.includes('моцарелла')) return 'моцарелла';
+      if (s.includes('камамбер') || s === 'бри') return 'камамбер / бри';
+      if (s.includes('плавленый сыр') || s.includes('плавленный сыр')) return 'плавленый сыр';
+      if (s.includes('рикотта')) return 'рикотта';
+      if (s.includes('маскарпоне')) return 'маскарпоне';
+      if (s === 'сыр' || s === 'твердый сыр' || s === 'сыр твердый' || s === 'легкий сыр') return 'сыр';
+      if (s === 'яйцо' || s === 'яйца' || s.includes('яичн') || s.includes('желтк') || s.includes('желток') || s.includes('белок яич')) return 'яйца';
+      if (s === 'масло сливочное' || s === 'сливочное масло' || s === 'масло') return 'сливочное масло';
+      if (s.includes('масло гхи') || s.includes('топленое масло')) return 'масло гхи';
+      if (s.includes('сгущен')) return 'сгущенка';
+
+      // --- МЯСО, ПТИЦА, РЫБА ---
+      if (s === 'куриная грудка' || s === 'куриное филе' || s === 'филе куриное' || s === 'грудка куриная' || s === 'курица' || s === 'отварная курица') return 'куриное филе';
+      if (s === 'куриный фарш' || s === 'фарш куриный') return 'куриный фарш';
+      if (s === 'фарш из индейки' || s === 'фарш индейки' || s === 'индюшиный фарш') return 'фарш из индейки';
+      if (s === 'говяжий фарш' || s === 'фарш говяжий') return 'говяжий фарш';
+      if (s === 'рваная говядина' || s === 'говядина' || s === 'ростбиф' || s === 'телятина') return 'говядина';
+      if (s === 'индейка' || s === 'филе индейки' || s === 'грудка индейки') return 'индейка';
+      if (s === 'семга' || s === 'лосось' || s === 'форель' || s === 'красная рыба') return 'красная рыба (лосось)';
+      if (s.includes('горбуша')) return 'горбуша';
+      if (s.includes('икра')) return 'икра';
+
+      // --- ОВОЩИ, ГРИБЫ И ЗЕЛЕНЬ ---
+      if (s === 'картошка' || s === 'картофель' || s === 'молодой картофель') return 'картофель';
+      if (s === 'огурец' || s === 'огурцы' || s === 'свежий огурец' || s === 'свежие огурцы') return 'огурцы';
+      if (s.includes('маринованные огурц') || s.includes('огурцы маринованн') || s.includes('соленые огурц') || s.includes('корнишон')) return 'маринованные огурцы';
+      if (s.includes('черри')) return 'помидоры черри';
+      if (s.includes('вяленые томат') || s.includes('вяленые помидор')) return 'вяленые томаты';
+      if (s.includes('протертые томат') || s === 'пассата' || s.includes('томаты в собственном')) return 'протертые томаты';
+      if (s === 'помидор' || s === 'помидоры' || s === 'томат' || s === 'томаты') return 'помидоры';
+      if (s === 'перец' || s.includes('болгарский перец') || s.includes('сладкий перец')) return 'болгарский перец';
+      if (s === 'горошек' || s.includes('зеленый горошек') || s.includes('консервированный горошек')) return 'зеленый горошек';
+      if (s.includes('зеленый лук') || s === 'лук зеленый') return 'зеленый лук';
+      if (s.includes('красный лук') || s === 'лук красный' || s.includes('ялтинский лук')) return 'красный лук';
+      if (s === 'лук' || s === 'репчатый лук' || s === 'лук репчатый') return 'лук';
+      if (s === 'чеснок' || s === 'зубчик чеснока') return 'чеснок';
+      if (s === 'сухой чеснок' || s === 'чеснок сушеный' || s === 'сушеный чеснок') return 'сухой чеснок';
+      if (s === 'салат' || s === 'листья салата' || s === 'салатный микс' || s === 'микс салата' || s === 'салат айсберг' || s === 'айсберг') return 'листья салата / айсберг';
+      if (s === 'свекла' || s === 'отварная свекла' || s === 'запеченная свекла') return 'свекла';
+      if (s === 'морковь' || s === 'морковка') return 'морковь';
+      if (s === 'кабачок' || s === 'кабачки' || s === 'цукини') return 'кабачок';
+      if (s === 'шампиньоны' || s === 'грибы шампиньоны') return 'шампиньоны';
+
+      // --- КРУПЫ, МУКА, ПАСТА, СЕМЕНА ---
+      if (s.includes('овсян') || s === 'геркулес') return 'овсяные хлопья';
+      if (s === 'спагетти' || s === 'макароны' || s === 'паста') return 'паста / спагетти';
+      if (s === 'багет' || s === 'хлеб' || s === 'тостовый хлеб' || s === 'белый хлеб' || s === 'цельнозерновой хлеб') return 'хлеб / багет';
+      if (s.includes('печенье')) return 'печенье';
+      if (s === 'растительное масло' || s === 'масло растительное' || s === 'подсолнечное масло') return 'растительное масло';
+      if (s === 'оливковое масло' || s === 'масло оливковое') return 'оливковое масло';
+      if (s === 'подсластитель' || s === 'сахарозаменитель' || s === 'сахзам' || s === 'эритрит' || s === 'стевия') return 'подсластитель';
+      if (s.includes('протеин') || s === 'казеин') return 'протеин';
+
+      return s;
+    }
+
+    // 2. СТРОГАЯ КЛАССИФИКАЦИЯ ПО КАТЕГОРИЯМ
+    const CATEGORY_ORDER = [
+      '🥛 Молочка и яйца',
+      '🥩 Белок (мясо, птица, рыба)',
+      '🥦 Овощи, грибы и зелень',
+      '🍎 Фрукты и ягоды',
+      '🌰 Орехи, семена и сухофрукты',
+      '🍝 Крупы, мука, паста и хлеб',
+      '🫒 Бакалея, масла, соусы и специи',
+      '🍫 Сладости, спортпит и напитки',
+      '📦 Прочее'
     ];
 
-    function getProductCategory(ingName) {
-      const lower = ingName.toLowerCase().trim();
-      for (const cat of PRODUCT_CATEGORIES) {
-        if (cat.keywords.some(kw => lower.includes(kw))) {
-          return cat.name;
-        }
+    function getProductCategory(ing) {
+      const s = ing.toLowerCase().replace(/ё/g, 'е').trim();
+
+      if (
+        s.includes('мука') || s.includes('крахмал') || s.includes('хлопья') || s.includes('крупа') ||
+        s.includes('манка') || s.includes('манная') || s.includes('отруби') || s.includes('клетчатка') ||
+        s.includes('псиллиум') || s.includes('птитим') || s.includes('булгур') || s.includes('кускус') ||
+        s.includes('киноа') || s.includes('греч') || s.includes('рис') || s.includes('паста') ||
+        s.includes('спагетти') || s.includes('макарон') || s.includes('вермишел') || s.includes('лапша') ||
+        s.includes('лазань') || s.includes('хлеб') || s.includes('багет') || s.includes('лаваш') ||
+        s.includes('тортиль') || s.includes('булоч') || s.includes('сухар') || s.includes('тесто') ||
+        s.includes('гранола') || s.includes('попкорн') || s.includes('нут') || s.includes('чечевиц')
+      ) {
+        return '🍝 Крупы, мука, паста и хлеб';
       }
+
+      if (
+        s.includes('семена') || s.includes('семечки') || s.includes('чиа') || s.includes('кунжут') ||
+        s.includes('мак') || s.includes('орех') || s.includes('миндал') || s.includes('кешью') ||
+        s.includes('фундук') || s.includes('арахис') || s.includes('грецк') || s.includes('фисташк') ||
+        s.includes('кедров') || s.includes('изюм') || s.includes('курага') || s.includes('чернослив') ||
+        s.includes('финик')
+      ) {
+        return '🌰 Орехи, семена и сухофрукты';
+      }
+
+      if (
+        s.includes('печенье') || s.includes('савоярди') || s.includes('шоколад') || s.includes('какао') ||
+        s.includes('карамель') || s.includes('сироп') || s.includes('мед') || s.includes('мёд') ||
+        s.includes('варенье') || s.includes('джем') || s.includes('мороженое') || s.includes('протеин') ||
+        s.includes('казеин') || s.includes('кофе') || s.includes('чай') || s.includes('сидр') ||
+        s.includes('сок') || s.includes('вода') || s.includes('вино') || s.includes('молоко кокосовое') ||
+        s.includes('кокосовое молоко')
+      ) {
+        return '🍫 Сладости, спортпит и напитки';
+      }
+
+      if (
+        s.includes('молоко') || s.includes('сыр') || s.includes('творог') || s.includes('йогурт') ||
+        s.includes('кефир') || s.includes('сливки') || s.includes('сметана') || s.includes('ряженка') ||
+        s.includes('айран') || s.includes('моцарелла') || s.includes('пармезан') || s.includes('фета') ||
+        s.includes('рикотта') || s.includes('маскарпоне') || s.includes('камамбер') || s.includes('бри') ||
+        s.includes('дор-блю') || s.includes('дорблю') || s.includes('брынза') || s.includes('сулугуни') ||
+        s.includes('халуми') || s.includes('яйц') || s.includes('яйцо') || s.includes('желток') ||
+        s.includes('желтки') || s.includes('сливочное масло') || s.includes('масло гхи') || s.includes('сгущенка')
+      ) {
+        return '🥛 Молочка и яйца';
+      }
+
+      if (
+        s.includes('кури') || s.includes('индейк') || s.includes('говяд') || s.includes('телят') ||
+        s.includes('свин') || s.includes('баран') || s.includes('утк') || s.includes('кролик') ||
+        s.includes('фарш') || s.includes('бекон') || s.includes('ветчин') || s.includes('колбас') ||
+        s.includes('сосиск') || s.includes('ростбиф') || s.includes('печень') || s.includes('желудк') ||
+        s.includes('сердц') || s.includes('язык') || s.includes('рыб') || s.includes('лосос') ||
+        s.includes('семг') || s.includes('форел') || s.includes('горбуш') || s.includes('кета') ||
+        s.includes('тунец') || s.includes('окунь') || s.includes('пангасиус') || s.includes('треск') ||
+        s.includes('минтай') || s.includes('судак') || s.includes('дорадо') || s.includes('сибас') ||
+        s.includes('скумбри') || s.includes('сельд') || s.includes('креветк') || s.includes('кальмар') ||
+        s.includes('мидии') || s.includes('осьминог') || s.includes('морепродукт') || s.includes('икра') ||
+        s.includes('краб')
+      ) {
+        return '🥩 Белок (мясо, птица, рыба)';
+      }
+
+      if (
+        s.includes('картоф') || s.includes('картош') || s.includes('батат') || s.includes('помидор') ||
+        s.includes('томат') || s.includes('огур') || s.includes('корнишон') || s.includes('перец') ||
+        s.includes('лук') || s === 'чеснок' || s.includes('морков') || s.includes('свекл') ||
+        s.includes('капуст') || s.includes('брокколи') || s.includes('кабач') || s.includes('цукини') ||
+        s.includes('баклажан') || s.includes('тыкв') || s.includes('авокадо') || s.includes('сельдерей') ||
+        s.includes('дайкон') || s.includes('редис') || s.includes('редьк') || s.includes('спарж') ||
+        s.includes('фасоль') || s.includes('горошек') || s.includes('кукуруза') || s.includes('шпинат') ||
+        s.includes('руккола') || s.includes('салат') || s.includes('айсберг') || s.includes('зелень') ||
+        s.includes('микрозелень') || s.includes('петрушк') || s.includes('укроп') || s.includes('кинза') ||
+        s.includes('базилик') || s.includes('мята') || s.includes('щавель') || s.includes('ростки') ||
+        s.includes('маш') || s.includes('гриб') || s.includes('шампиньон') || s.includes('лисичк') ||
+        s.includes('вешенк') || s.includes('белые грибы') || s.includes('аджапсандал')
+      ) {
+        return '🥦 Овощи, грибы и зелень';
+      }
+
+      if (
+        s.includes('яблок') || s.includes('банан') || s.includes('груш') || s.includes('апельсин') ||
+        s.includes('мандарин') || s.includes('лимон') || s.includes('лайм') || s.includes('грейпфрут') ||
+        s.includes('киви') || s.includes('манго') || s.includes('ананас') || s.includes('персик') ||
+        s.includes('нектарин') || s.includes('абрикос') || s.includes('слива') || s.includes('виноград') ||
+        s.includes('гранат') || s.includes('хурма') || s.includes('инжир') || s.includes('дыня') ||
+        s.includes('арбуз') || s.includes('кокос') || s.includes('ягод') || s.includes('клубник') ||
+        s.includes('малин') || s.includes('черник') || s.includes('голубик') || s.includes('ежевик') ||
+        s.includes('вишн') || s.includes('черешн') || s.includes('клюкв') || s.includes('брусник') ||
+        s.includes('смородин') || s.includes('облепих')
+      ) {
+        return '🍎 Фрукты и ягоды';
+      }
+
+      if (
+        s.includes('масло') || s.includes('соль') || s.includes('сахар') || s.includes('подсластитель') ||
+        s.includes('специи') || s.includes('приправ') || s.includes('пряност') || s.includes('паприка') ||
+        s.includes('куркума') || s.includes('карри') || s.includes('кардамон') || s.includes('корица') ||
+        s.includes('ванил') || s.includes('орегано') || s.includes('травы') || s.includes('лавров') ||
+        s.includes('сухой чеснок') || s.includes('имбирь') || s.includes('горчиц') || s.includes('хрен') ||
+        s.includes('соус') || s.includes('майонез') || s.includes('кетчуп') || s.includes('паста томат') ||
+        s.includes('томатная паста') || s.includes('уксус') || s.includes('бальзамик') || s.includes('бульон') ||
+        s.includes('маслин') || s.includes('оливк') || s.includes('каперс') || s.includes('дрожжи') ||
+        s.includes('разрыхлитель') || s.includes('сода') || s.includes('желатин') || s.includes('агар') ||
+        s.includes('песто') || s.includes('хумус')
+      ) {
+        return '🫒 Бакалея, масла, соусы и специи';
+      }
+
       return '📦 Прочее';
     }
 
+    function normalizeRecipeCategory(cat) {
+      let c = String(cat || 'Разное').trim();
+      if (!c) return 'Разное';
+      c = c.charAt(0).toUpperCase() + c.slice(1).toLowerCase();
+      if (c === 'Суп') return 'Супы';
+      if (c === 'Салат') return 'Салаты';
+      if (c === 'Завтрак') return 'Завтраки';
+      if (c === 'Десерт') return 'Десерты';
+      if (c === 'Гарнир') return 'Гарниры';
+      if (c === 'Боул') return 'Боулы';
+      if (c === 'Закуска') return 'Закуски';
+      if (c === 'Соус') return 'Соусы';
+      return c;
+    }
+
     let recipes = [];
-    let fridge = new Set(JSON.parse(localStorage.getItem('my_fridge') || '[]'));
+    const rawSavedFridge = JSON.parse(localStorage.getItem('my_fridge') || '[]');
+    let fridge = new Set(rawSavedFridge.map(canonicalizeTag).filter(Boolean));
     let cart = JSON.parse(localStorage.getItem('my_cart') || '[]');
     let activeCategory = 'Все';
     let currentModalRecipeId = null;
+    let appMode = 'catalog';
+
+    // Состояние конструктора рациона
+    let mealPlan = JSON.parse(localStorage.getItem('my_meal_plan') || 'null');
+    const PORTION_STEPS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2];
+
+    const MEAL_SLOTS = [
+      { key: 'breakfast', label: '🌅 Завтрак', ratio: 0.26, preferredCats: ['Завтраки'] },
+      { key: 'lunch',     label: '🍲 Обед',    ratio: 0.34, preferredCats: ['Супы', 'Горячее', 'Боулы', 'Гарниры'] },
+      { key: 'dinner',    label: '🍽️ Ужин',    ratio: 0.25, preferredCats: ['Горячее', 'Салаты', 'Боулы', 'Гарниры'] },
+      { key: 'snack',     label: '🍰 Перекус / Десерт', ratio: 0.15, preferredCats: ['Десерты', 'Закуски', 'Салаты', 'Завтраки'] }
+    ];
+
+    function switchAppMode(mode) {
+      appMode = mode;
+      document.getElementById('modeCatalogBtn').classList.toggle('active', mode === 'catalog');
+      document.getElementById('modePlannerBtn').classList.toggle('active', mode === 'planner');
+      document.getElementById('catalogView').style.display = mode === 'catalog' ? 'flex' : 'none';
+      document.getElementById('plannerView').style.display = mode === 'planner' ? 'flex' : 'none';
+
+      if (mode === 'planner' && recipes.length > 0) {
+        if (!mealPlan || !mealPlan.days || mealPlan.days.length === 0) {
+          generateMealPlan(false);
+        } else {
+          renderMealPlan();
+        }
+      }
+    }
 
     function saveFridge() {
       localStorage.setItem('my_fridge', JSON.stringify([...fridge]));
@@ -555,7 +1007,11 @@
       document.getElementById('cartBadge').textContent = cart.length;
     }
 
-    // 1. Загрузка рецептов из Google Таблицы (GET)
+    function saveMealPlanState() {
+      localStorage.setItem('my_meal_plan', JSON.stringify(mealPlan));
+    }
+
+    // Загрузка рецептов из Google Таблицы (GET)
     async function loadRecipes() {
       const container = document.getElementById('recipesContainer');
       container.innerHTML = '<div class="loader">⏳ Синхронизация с Google Таблицей...</div>';
@@ -565,32 +1021,423 @@
 
         recipes = data
           .filter(item => item.title && String(item.title).trim() !== '')
-          .map((item, idx) => ({
-            id: String(item.id || 'rec_' + idx),
-            title: String(item.title).trim(),
-            category: String(item.category || 'Разное').trim(),
-            calories: Number(item.calories) || 0,
-            tags: String(item.tags || '')
+          .map((item, idx) => {
+            const rawTags = String(item.tags || '')
               .split(',')
-              .map(t => t.trim().toLowerCase())
-              .filter(Boolean),
-            ingredients: String(item.ingredients || ''),
-            steps: String(item.steps || '')
-          }));
+              .map(t => t.trim())
+              .filter(Boolean);
+
+            const canonicalTags = [...new Set(rawTags.map(canonicalizeTag).filter(Boolean))];
+
+            return {
+              id: String(item.id || 'rec_' + idx),
+              title: String(item.title).trim(),
+              category: normalizeRecipeCategory(item.category),
+              calories: Number(item.calories) || 280,
+              tags: canonicalTags,
+              rawTags: rawTags,
+              ingredients: String(item.ingredients || ''),
+              steps: String(item.steps || '')
+            };
+          });
 
         renderCategories();
         renderFridge();
         renderRecipes();
         saveCart();
+        if (appMode === 'planner') {
+          if (!mealPlan) generateMealPlan(false);
+          else renderMealPlan();
+        }
       } catch (err) {
         console.error('Ошибка загрузки:', err);
         container.innerHTML = `<div class="loader" style="color:var(--danger);">
-          ❌ Не удалось загрузить рецепты. Проверьте доступ к скрипту (должен быть «Все / Anyone»).
+          ❌ Не удалось загрузить рецепты. Проверьте подключение или настройки скрипта.
         </div>`;
       }
     }
 
-    // 2. Рендер категорий рецептов
+    // ================= ЛОГИКА УМНОГО КОНСТРУКТОРА РАЦИОНА =================
+    function getPoolForSlot(slotKey) {
+      const slotDef = MEAL_SLOTS.find(s => s.key === slotKey);
+      let pool = recipes.filter(r => slotDef.preferredCats.includes(r.category));
+      if (pool.length === 0) pool = [...recipes];
+      return pool;
+    }
+
+    // Подбор оптимальной порции (особенно важно для десертов и перекусов)
+    function pickBestPortion(recipeKcal, targetSlotKcal, slotKey) {
+      if (!recipeKcal || recipeKcal <= 0) return 1;
+      const allowedSteps = slotKey === 'snack'
+        ? [0.25, 0.5, 0.75, 1] // Для десертов/перекусов охотно уменьшаем порцию до 0.5 или 0.75
+        : [0.5, 0.75, 1, 1.25, 1.5];
+
+      let bestStep = 1;
+      let minDiff = Infinity;
+      for (const step of allowedSteps) {
+        const diff = Math.abs(recipeKcal * step - targetSlotKcal);
+        if (diff < minDiff) {
+          minDiff = diff;
+          bestStep = step;
+        }
+      }
+      return bestStep;
+    }
+
+    function onPlannerSettingsChange() {
+      const daysCount = Number(document.getElementById('planDaysSelect').value) || 3;
+      const targetKcal = Number(document.getElementById('planTargetKcal').value) || 1600;
+
+      if (!mealPlan) {
+        generateMealPlan(false);
+        return;
+      }
+
+      mealPlan.targetKcal = targetKcal;
+      if (mealPlan.days.length !== daysCount) {
+        generateMealPlan(false);
+      } else {
+        // Пересчитываем оптимальные порции под новую цель калорий
+        mealPlan.days.forEach(day => {
+          MEAL_SLOTS.forEach(slot => {
+            const cell = day.meals[slot.key];
+            if (cell && !cell.pinned) {
+              const r = recipes.find(x => x.id === cell.recipeId);
+              if (r) {
+                cell.portion = pickBestPortion(r.calories, targetKcal * slot.ratio, slot.key);
+              }
+            }
+          });
+        });
+        saveMealPlanState();
+        renderMealPlan();
+      }
+    }
+
+    function generateMealPlan(resetPins = false) {
+      if (recipes.length === 0) return;
+
+      const daysCount = Number(document.getElementById('planDaysSelect').value) || 3;
+      const targetKcal = Number(document.getElementById('planTargetKcal').value) || 1600;
+
+      // Собираем пул продуктов, которые уже задействованы в рационе (для максимального пересечения)
+      const planIngredients = new Set();
+      const usedRecipeCounts = {};
+
+      const newDays = [];
+      for (let d = 0; d < daysCount; d++) {
+        const existingDay = (!resetPins && mealPlan && mealPlan.days && mealPlan.days[d]) ? mealPlan.days[d] : null;
+        const mealsObj = {};
+
+        MEAL_SLOTS.forEach(slot => {
+          const prevCell = existingDay && existingDay.meals ? existingDay.meals[slot.key] : null;
+          if (prevCell && prevCell.pinned && recipes.some(r => r.id === prevCell.recipeId)) {
+            mealsObj[slot.key] = { ...prevCell };
+            const rec = recipes.find(r => r.id === prevCell.recipeId);
+            if (rec) {
+              rec.tags.forEach(t => planIngredients.add(t));
+              usedRecipeCounts[rec.id] = (usedRecipeCounts[rec.id] || 0) + 1;
+            }
+          } else {
+            mealsObj[slot.key] = null;
+          }
+        });
+
+        newDays.push({ dayNumber: d + 1, meals: mealsObj });
+      }
+
+      // Заполняем все незакрепленные слоты
+      for (let d = 0; d < daysCount; d++) {
+        const prevDay = d > 0 ? newDays[d - 1] : null;
+
+        MEAL_SLOTS.forEach(slot => {
+          if (newDays[d].meals[slot.key]) return; // уже закреплен
+
+          const pool = getPoolForSlot(slot.key);
+          const targetSlotKcal = targetKcal * slot.ratio;
+          const prevDayRecipeId = prevDay && prevDay.meals[slot.key] ? prevDay.meals[slot.key].recipeId : null;
+
+          // Оцениваем каждого кандидата: баланс общих продуктов + холодильника + калорий + разнообразия
+          const scored = pool.map(r => {
+            let score = 0;
+
+            // 1. Совпадение с холодильником и уже набранной продуктовой корзиной рациона
+            r.tags.forEach(t => {
+              if (planIngredients.has(t)) score += 3.5; // Отлично! Продукт уже используется в других блюдах рациона
+              else if (fridge.has(t)) score += 2.5;     // Продукт уже есть дома в холодильнике
+              else score -= 1.2;                        // Новый продукт, который придется докупать
+            });
+
+            // 2. Штраф за повторы одного и того же блюда, чтобы было разнообразие
+            const timesUsed = usedRecipeCounts[r.id] || 0;
+            if (r.id === prevDayRecipeId && pool.length > 1) score -= 25; // Не повторять два дня подряд
+            score -= timesUsed * 8;
+
+            // 3. Оценка попадания в целевую калорийность слота с учетом умной порции
+            const bestPortion = pickBestPortion(r.calories, targetSlotKcal, slot.key);
+            const kcalDiff = Math.abs((r.calories * bestPortion) - targetSlotKcal);
+            score -= (kcalDiff / 120);
+
+            // 4. Небольшой случайный фактор для бесконечного разнообразия при пересборке
+            score += Math.random() * 4.5;
+
+            return { recipe: r, score, bestPortion };
+          });
+
+          scored.sort((a, b) => b.score - a.score);
+          // Выбираем случайного из топ-3 лучших кандидатов
+          const topN = scored.slice(0, Math.min(3, scored.length));
+          const chosen = topN[Math.floor(Math.random() * topN.length)];
+
+          newDays[d].meals[slot.key] = {
+            recipeId: chosen.recipe.id,
+            portion: chosen.bestPortion,
+            pinned: false
+          };
+
+          chosen.recipe.tags.forEach(t => planIngredients.add(t));
+          usedRecipeCounts[chosen.recipe.id] = (usedRecipeCounts[chosen.recipe.id] || 0) + 1;
+        });
+      }
+
+      mealPlan = {
+        daysCount,
+        targetKcal,
+        days: newDays
+      };
+
+      saveMealPlanState();
+      renderMealPlan();
+    }
+
+    // Замена одного конкретного блюда в рационе
+    function rerollSingleSlot(dayIdx, slotKey) {
+      if (!mealPlan || !mealPlan.days[dayIdx]) return;
+      const currentCell = mealPlan.days[dayIdx].meals[slotKey];
+      const slotDef = MEAL_SLOTS.find(s => s.key === slotKey);
+      const pool = getPoolForSlot(slotKey);
+
+      // Собираем продукты остальных блюд рациона
+      const otherPlanIngs = new Set();
+      mealPlan.days.forEach((d, dIdx) => {
+        MEAL_SLOTS.forEach(s => {
+          if (dIdx === dayIdx && s.key === slotKey) return;
+          const cell = d.meals[s.key];
+          const rec = cell ? recipes.find(r => r.id === cell.recipeId) : null;
+          if (rec) rec.tags.forEach(t => otherPlanIngs.add(t));
+        });
+      });
+
+      const candidates = pool.filter(r => r.id !== (currentCell ? currentCell.recipeId : null));
+      const finalPool = candidates.length > 0 ? candidates : pool;
+      const targetSlotKcal = (mealPlan.targetKcal || 1600) * slotDef.ratio;
+
+      const scored = finalPool.map(r => {
+        let score = Math.random() * 5;
+        r.tags.forEach(t => {
+          if (otherPlanIngs.has(t)) score += 3.5;
+          else if (fridge.has(t)) score += 2.5;
+          else score -= 1;
+        });
+        const bestPortion = pickBestPortion(r.calories, targetSlotKcal, slotKey);
+        return { recipe: r, score, bestPortion };
+      });
+
+      scored.sort((a, b) => b.score - a.score);
+      const topCandidates = scored.slice(0, Math.min(4, scored.length));
+      const picked = topCandidates[Math.floor(Math.random() * topCandidates.length)];
+
+      mealPlan.days[dayIdx].meals[slotKey] = {
+        recipeId: picked.recipe.id,
+        portion: picked.bestPortion,
+        pinned: currentCell ? currentCell.pinned : false
+      };
+
+      saveMealPlanState();
+      renderMealPlan();
+    }
+
+    function togglePinSlot(dayIdx, slotKey) {
+      const cell = mealPlan.days[dayIdx].meals[slotKey];
+      if (!cell) return;
+      cell.pinned = !cell.pinned;
+      saveMealPlanState();
+      renderMealPlan();
+    }
+
+    function changeSlotPortion(dayIdx, slotKey, deltaIndex) {
+      const cell = mealPlan.days[dayIdx].meals[slotKey];
+      if (!cell) return;
+      let idx = PORTION_STEPS.indexOf(cell.portion);
+      if (idx === -1) idx = PORTION_STEPS.indexOf(1);
+      const nextIdx = Math.max(0, Math.min(PORTION_STEPS.length - 1, idx + deltaIndex));
+      cell.portion = PORTION_STEPS[nextIdx];
+      saveMealPlanState();
+      renderMealPlan();
+    }
+
+    function formatPortionLabel(p) {
+      if (p === 0.25) return '¼ порции (0.25x)';
+      if (p === 0.5) return '½ порции (0.5x)';
+      if (p === 0.75) return '¾ порции (0.75x)';
+      if (p === 1) return '1 порция';
+      return `${p} порции`;
+    }
+
+    function renderMealPlan() {
+      if (!mealPlan || !mealPlan.days) return;
+
+      document.getElementById('planDaysSelect').value = String(mealPlan.days.length);
+      document.getElementById('planTargetKcal').value = String(mealPlan.targetKcal || 1600);
+
+      const daysContainer = document.getElementById('plannerDaysContainer');
+      const targetKcal = mealPlan.targetKcal || 1600;
+
+      // Подсчет частоты использования каждого продукта во всем рационе
+      const ingUsageMap = {}; // tag -> { count, recipes: Set }
+
+      const daysHTML = mealPlan.days.map((day, dIdx) => {
+        let dayTotalKcal = 0;
+
+        const slotsHTML = MEAL_SLOTS.map(slot => {
+          const cell = day.meals[slot.key];
+          const r = cell ? recipes.find(item => item.id === cell.recipeId) : null;
+          if (!r) return '';
+
+          const portion = cell.portion || 1;
+          const mealKcal = Math.round((r.calories || 0) * portion);
+          dayTotalKcal += mealKcal;
+
+          r.tags.forEach(t => {
+            if (!ingUsageMap[t]) ingUsageMap[t] = { count: 0, recipes: new Set() };
+            ingUsageMap[t].count += 1;
+            ingUsageMap[t].recipes.add(r.title);
+          });
+
+          return `
+            <div class="meal-slot ${cell.pinned ? 'pinned' : ''}">
+              <div class="meal-slot-top">
+                <span class="meal-type-label">${slot.label}</span>
+                <div class="meal-slot-actions">
+                  <button class="icon-btn ${cell.pinned ? 'active-pin' : ''}" onclick="togglePinSlot(${dIdx}, '${slot.key}')" title="${cell.pinned ? 'Открепить блюдо' : 'Закрепить блюдо (не менять при пересборке)'}">
+                    📌
+                  </button>
+                  <button class="icon-btn" onclick="rerollSingleSlot(${dIdx}, '${slot.key}')" title="Заменить только это блюдо">
+                    🔄
+                  </button>
+                </div>
+              </div>
+              <div class="meal-recipe-title" onclick="openRecipeModal('${r.id}')">
+                ${r.title}
+              </div>
+              <div class="meal-portion-bar">
+                <div class="portion-controls" title="Изменить размер порции для регулировки калорий">
+                  <button class="portion-btn" onclick="changeSlotPortion(${dIdx}, '${slot.key}', -1)">−</button>
+                  <span class="portion-val">${formatPortionLabel(portion)}</span>
+                  <button class="portion-btn" onclick="changeSlotPortion(${dIdx}, '${slot.key}', 1)">+</button>
+                </div>
+                <span class="meal-kcal-info">🔥 ${mealKcal} ккал</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        const diff = Math.abs(dayTotalKcal - targetKcal);
+        const kcalClass = diff <= 200 ? 'kcal-ok' : 'kcal-warn';
+
+        return `
+          <div class="day-card">
+            <div class="day-header">
+              <span class="day-title">День ${day.dayNumber}</span>
+              <span class="day-kcal-badge ${kcalClass}">
+                Итого: ${dayTotalKcal} / ${targetKcal} ккал
+              </span>
+            </div>
+            ${slotsHTML}
+          </div>
+        `;
+      }).join('');
+
+      daysContainer.innerHTML = daysHTML;
+
+      // Рендер сводки продуктов под весь рацион
+      const allPlanTags = Object.keys(ingUsageMap).sort((a, b) => ingUsageMap[b].count - ingUsageMap[a].count);
+      const missingTags = allPlanTags.filter(t => !fridge.has(t));
+      const haveTags = allPlanTags.filter(t => fridge.has(t));
+      const sharedCount = allPlanTags.filter(t => ingUsageMap[t].count >= 2).length;
+
+      const summaryEl = document.getElementById('plannerSummaryContainer');
+      summaryEl.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h3 style="font-size:1.15rem; font-weight:800;">🛒 Продуктовая корзина на ${mealPlan.days.length} дн.</h3>
+            <p style="font-size:0.84rem; color:var(--muted);">
+              Всего уникальных продуктов: <strong>${allPlanTags.length}</strong> (из них <strong>${sharedCount}</strong> используются сразу в нескольких блюдах рациона).
+            </p>
+          </div>
+          ${missingTags.length > 0 ? `
+            <button class="btn btn-primary" onclick="addPlanMissingToCart()">
+              🛒 Отправить недостающее в список покупок (${missingTags.length})
+            </button>
+          ` : '<span style="color:var(--accent); font-weight:700;">🎉 Все продукты для рациона уже есть в холодильнике!</span>'}
+        </div>
+
+        ${missingTags.length > 0 ? `
+          <div>
+            <h4 style="font-size:0.85rem; color:#991b1b; margin-bottom:8px; text-transform:uppercase;">Нужно докупить (${missingTags.length}):</h4>
+            <div class="summary-ing-grid">
+              ${missingTags.map(t => `
+                <span class="summary-chip tag-miss" onclick="toggleIngredient('${t.replace(/'/g, "\\'")}')" title="Кликните, если продукт уже есть дома">
+                  + ${t} <span class="summary-chip-count">${ingUsageMap[t].count}x</span>
+                </span>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+
+        ${haveTags.length > 0 ? `
+          <div>
+            <h4 style="font-size:0.85rem; color:#065f46; margin-bottom:8px; text-transform:uppercase;">Уже есть в холодильнике (${haveTags.length}):</h4>
+            <div class="summary-ing-grid">
+              ${haveTags.map(t => `
+                <span class="summary-chip tag-have" onclick="toggleIngredient('${t.replace(/'/g, "\\'")}')">
+                  ✓ ${t} <span class="summary-chip-count">${ingUsageMap[t].count}x</span>
+                </span>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+      `;
+    }
+
+    function addPlanMissingToCart() {
+      if (!mealPlan || !mealPlan.days) return;
+      let addedCount = 0;
+
+      mealPlan.days.forEach(day => {
+        MEAL_SLOTS.forEach(slot => {
+          const cell = day.meals[slot.key];
+          const r = cell ? recipes.find(item => item.id === cell.recipeId) : null;
+          if (!r) return;
+
+          const miss = r.tags.filter(t => !fridge.has(t));
+          miss.forEach(prod => {
+            const existing = cart.find(c => canonicalizeTag(c.name) === prod);
+            if (existing) {
+              if (!existing.recipes.includes(r.title)) existing.recipes.push(r.title);
+            } else {
+              cart.push({ name: prod, checked: false, recipes: [r.title] });
+              addedCount++;
+            }
+          });
+        });
+      });
+
+      saveCart();
+      openCartModal();
+    }
+
+    // ================= КАТАЛОГ И ХОЛОДИЛЬНИК =================
     function renderCategories() {
       const cats = ['Все', ...new Set(recipes.map(r => r.category))];
       const tabsEl = document.getElementById('categoryTabs');
@@ -607,7 +1454,6 @@
       renderRecipes();
     }
 
-    // 3. Рендер холодильника по категориям (Молочка, Белок, Овощи, Фрукты и др.)
     function getAllIngredients() {
       const set = new Set();
       recipes.forEach(r => r.tags.forEach(t => set.add(t)));
@@ -616,19 +1462,22 @@
 
     function renderFridge() {
       saveFridge();
-      const q = document.getElementById('ingSearch').value.trim().toLowerCase();
-      const allIngs = getAllIngredients().filter(ing => ing.includes(q));
-      const listEl = document.getElementById('ingList');
+      const rawQuery = document.getElementById('ingSearch').value.trim().toLowerCase().replace(/ё/g, 'е');
+      const canonicalQuery = rawQuery ? canonicalizeTag(rawQuery) : '';
 
+      const allIngs = getAllIngredients().filter(ing => {
+        if (!rawQuery) return true;
+        return ing.includes(rawQuery) || ing.includes(canonicalQuery);
+      });
+
+      const listEl = document.getElementById('ingList');
       if (allIngs.length === 0) {
         listEl.innerHTML = '<div style="color:var(--muted); font-size:0.85rem;">Продукты не найдены</div>';
         return;
       }
 
-      // Группируем продукты по категориям
       const grouped = {};
-      PRODUCT_CATEGORIES.forEach(c => grouped[c.name] = []);
-      grouped['📦 Прочее'] = [];
+      CATEGORY_ORDER.forEach(c => grouped[c] = []);
 
       allIngs.forEach(ing => {
         const catName = getProductCategory(ing);
@@ -637,7 +1486,8 @@
       });
 
       let html = '';
-      for (const [catName, items] of Object.entries(grouped)) {
+      for (const catName of CATEGORY_ORDER) {
+        const items = grouped[catName] || [];
         if (items.length === 0) continue;
         const selectedInCat = items.filter(i => fridge.has(i)).length;
         html += `
@@ -661,43 +1511,55 @@
     }
 
     function toggleIngredient(ing) {
-      const norm = ing.toLowerCase().trim();
+      const norm = canonicalizeTag(ing);
       if (fridge.has(norm)) fridge.delete(norm);
       else fridge.add(norm);
       renderFridge();
       renderRecipes();
+      if (appMode === 'planner') renderMealPlan();
       if (currentModalRecipeId) openRecipeModal(currentModalRecipeId);
     }
 
     function selectBaseProducts() {
       ['яйца', 'молоко', 'сливочное масло', 'растительное масло', 'оливковое масло', 'соль', 'сахар', 'мука', 'лук', 'чеснок', 'специи']
+        .map(canonicalizeTag)
         .forEach(i => fridge.add(i));
       renderFridge();
       renderRecipes();
+      if (appMode === 'planner') renderMealPlan();
     }
 
     function selectAllProducts() {
       getAllIngredients().forEach(i => fridge.add(i));
       renderFridge();
       renderRecipes();
+      if (appMode === 'planner') renderMealPlan();
     }
 
     function clearFridge() {
       fridge.clear();
       renderFridge();
       renderRecipes();
+      if (appMode === 'planner') renderMealPlan();
     }
 
-    // 4. Рендер карточек рецептов с разбивкой по группам готовности
     function renderRecipes() {
-      const q = document.getElementById('recipeSearch').value.trim().toLowerCase();
+      const q = document.getElementById('recipeSearch').value.trim().toLowerCase().replace(/ё/g, 'е');
       const sort = document.getElementById('sortSelect').value;
       const container = document.getElementById('recipesContainer');
 
       let filtered = recipes.filter(r => {
         const matchCat = activeCategory === 'Все' || r.category === activeCategory;
-        const matchQuery = !q || r.title.toLowerCase().includes(q) || r.tags.some(t => t.includes(q)) || r.ingredients.toLowerCase().includes(q);
-        return matchCat && matchQuery;
+        if (!matchCat) return false;
+        if (!q) return true;
+        const titleNorm = r.title.toLowerCase().replace(/ё/g, 'е');
+        const ingsNorm = r.ingredients.toLowerCase().replace(/ё/g, 'е');
+        return (
+          titleNorm.includes(q) ||
+          ingsNorm.includes(q) ||
+          r.tags.some(t => t.includes(q)) ||
+          r.rawTags.some(t => t.toLowerCase().replace(/ё/g, 'е').includes(q))
+        );
       }).map(r => {
         const have = r.tags.filter(t => fridge.has(t));
         const miss = r.tags.filter(t => !fridge.has(t));
@@ -724,15 +1586,9 @@
       const many = filtered.filter(r => r.missCount > 2);
 
       let html = '';
-      if (ready.length) {
-        html += renderStatusGroup('Можно готовить прямо сейчас', '#10b981', ready);
-      }
-      if (almost.length) {
-        html += renderStatusGroup('Не хватает 1–2 продуктов', '#f59e0b', almost);
-      }
-      if (many.length) {
-        html += renderStatusGroup('Нужно докупить продукты', '#ef4444', many);
-      }
+      if (ready.length) html += renderStatusGroup('Можно готовить прямо сейчас', '#10b981', ready);
+      if (almost.length) html += renderStatusGroup('Не хватает 1–2 продуктов', '#f59e0b', almost);
+      if (many.length) html += renderStatusGroup('Нужно докупить продукты', '#ef4444', many);
       container.innerHTML = html;
     }
 
@@ -785,7 +1641,7 @@
       `;
     }
 
-    // 5. Модальное окно просмотра рецепта
+    // Модальное окно просмотра рецепта
     function openRecipeModal(id) {
       const r = recipes.find(item => item.id === id);
       if (!r) return;
@@ -795,7 +1651,7 @@
       document.getElementById('mTitle').textContent = r.title;
       document.getElementById('mRawIngs').textContent = r.ingredients || 'Не указано';
       document.getElementById('mSteps').textContent = r.steps || 'Описание шагов отсутствует';
-      document.getElementById('mKcal').textContent = r.calories ? `🔥 Калорийность: ${r.calories} ккал` : '';
+      document.getElementById('mKcal').textContent = r.calories ? `🔥 Калорийность (1 порция): ${r.calories} ккал` : '';
 
       const tagsEl = document.getElementById('mTags');
       tagsEl.innerHTML = r.tags.map(t => `
@@ -825,14 +1681,14 @@
       document.getElementById('recipeModal').classList.remove('open');
     }
 
-    // 6. Логика корзины (Списка покупок)
+    // Корзина (Список покупок)
     function addMissingToCart(recipeId, btnEl) {
       const r = recipes.find(item => item.id === recipeId);
       if (!r) return;
       const miss = r.tags.filter(t => !fridge.has(t));
 
       miss.forEach(prod => {
-        const existing = cart.find(c => c.name.toLowerCase() === prod.toLowerCase());
+        const existing = cart.find(c => canonicalizeTag(c.name) === prod);
         if (existing) {
           if (!existing.recipes.includes(r.title)) existing.recipes.push(r.title);
         } else {
@@ -905,12 +1761,13 @@
         alert('Отметьте галочками купленные продукты, чтобы перенести их в холодильник.');
         return;
       }
-      bought.forEach(c => fridge.add(c.name.toLowerCase().trim()));
+      bought.forEach(c => fridge.add(canonicalizeTag(c.name)));
       cart = cart.filter(c => !c.checked);
       saveCart();
       renderCartList();
       renderFridge();
       renderRecipes();
+      if (appMode === 'planner') renderMealPlan();
     }
 
     function copyCartToClipboard() {
@@ -925,7 +1782,7 @@
       renderCartList();
     }
 
-    // 7. Отправка нового рецепта в Google Таблицу (POST)
+    // Отправка нового рецепта в Google Таблицу (POST)
     function openAddModal() {
       document.getElementById('addModal').classList.add('open');
     }
@@ -942,7 +1799,7 @@
 
       const payload = {
         title: document.getElementById('fTitle').value.trim(),
-        category: document.getElementById('fCategory').value.trim(),
+        category: normalizeRecipeCategory(document.getElementById('fCategory').value),
         calories: Number(document.getElementById('fCalories').value) || 0,
         tags: document.getElementById('fTags').value.trim().toLowerCase(),
         ingredients: document.getElementById('fIngredients').value.trim(),
@@ -973,7 +1830,6 @@
       }
     }
 
-    // Запуск при открытии сайта
     document.addEventListener('DOMContentLoaded', loadRecipes);
   </script>
 </body>
