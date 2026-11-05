@@ -194,6 +194,215 @@
       padding: 16px;
       border-radius: var(--radius);
       border: 1px solid var(--border);
+      display:В обновлённый код `index.html` внесены оба изменения:
+
+1. **Строгий выбор десертов**: для 4-го слота (`🍰 Десерт`) блюда теперь берутся **исключительно из категории «Десерты»** (без примешивания салатов, закусок или завтраков).
+2. **Настройка режима разнообразия продуктов (3 режима в выпадающем списке конструктора)**:
+   * **Режим 1: Экономия и холодильник (как было)** — максимальный приоритет продуктам из холодильника и максимальное пересечение продуктов между днями (минимум новых покупок).
+   * **Режим 2: Баланс (больше разнообразия + общие продукты)** — алгоритм мягче относится к новым продуктам, расширяет выборку блюд (топ-6 вместо топ-3), но сохраняет приятные пересечения ингредиентов между днями.
+   * **Режим 3: Полный рандом (с учётом холодильника)** — блюда не привязываются к продуктам предыдущих дней (каждый день может быть из совершенно разных продуктов), но блюда, для которых в вашем холодильнике уже есть ингредиенты, получают бонус при случайном выборе.
+
+### Полный код `index.html`
+
+Замените содержимое вашего файла `index.html` на GitHub этим кодом:
+
+```html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Мои Рецепты и Умный Холодильник</title>
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --accent: #10b981;
+      --accent-hover: #059669;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* Шапка */
+    .header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .header-left { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .header-title { font-size: 1.25rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+    .nav-modes {
+      display: flex;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: 10px;
+      gap: 4px;
+    }
+    .nav-mode-btn {
+      padding: 6px 14px;
+      border-radius: 7px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .nav-mode-btn.active {
+      background: var(--card);
+      color: var(--text);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+    .btn {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn:hover { background: #f8fafc; border-color: #cbd5e1; }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-cart { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+    .btn-cart:hover { background: #dbeafe; }
+    .cart-badge {
+      background: #2563eb;
+      color: #fff;
+      padding: 1px 7px;
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 24px;
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 24px;
+      align-items: start;
+    }
+    @media (max-width: 980px) {
+      .container { grid-template-columns: 1fr; padding: 12px; }
+      .header { padding: 12px; }
+    }
+
+    /* Панель холодильника */
+    .fridge-panel {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 18px;
+      position: sticky;
+      top: 76px;
+      max-height: calc(100vh - 96px);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    @media (max-width: 980px) {
+      .fridge-panel { position: static; max-height: 500px; }
+    }
+    .fridge-header { display: flex; justify-content: space-between; align-items: center; }
+    .fridge-header h2 { font-size: 1.1rem; font-weight: 700; }
+    .fridge-stats { font-size: 0.8rem; color: var(--accent); font-weight: 700; background: #ecfdf5; padding: 3px 8px; border-radius: 6px; }
+
+    .search-input, .select-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      outline: none;
+      background: #fff;
+    }
+    .search-input:focus, .select-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15); }
+
+    .fridge-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .fridge-actions .btn { flex: 1; justify-content: center; padding: 6px 8px; font-size: 0.75rem; }
+
+    .ing-list {
+      overflow-y: auto;
+      flex: 1;
+      padding-right: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .ing-cat-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .ing-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+    .ing-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      font-size: 0.82rem;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s;
+    }
+    .ing-chip:hover { border-color: #cbd5e1; }
+    .ing-chip.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* Правая панель с рецептами */
+    .main-panel { display: flex; flex-direction: column; gap: 20px; }
+    .filters-bar {
+      background: var(--card);
+      padding: 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -305,7 +514,7 @@
     }
     .planner-settings-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
       gap: 12px;
       align-items: end;
     }
@@ -612,10 +821,18 @@
             <label>Количество дней</label>
             <select id="planDaysSelect" class="select-input" onchange="onPlannerSettingsChange()">
               <option value="2">2 дня</option>
-              <option value="3" selected>3 дня (оптимально по продуктам)</option>
+              <option value="3" selected>3 дня (оптимально)</option>
               <option value="4">4 дня</option>
               <option value="5">5 дней (будни)</option>
               <option value="7">7 дней (неделя)</option>
+            </select>
+          </div>
+          <div class="planner-field">
+            <label>Режим разнообразия продуктов</label>
+            <select id="planVarietySelect" class="select-input" onchange="generateMealPlan(false)">
+              <option value="strict" selected>1. Экономия (приоритет холодильнику + общие продукты)</option>
+              <option value="balanced">2. Баланс (больше разнообразия + совпадения по дням)</option>
+              <option value="random">3. Полный рандом (с учётом холодильника)</option>
             </select>
           </div>
           <div class="planner-field">
@@ -623,7 +840,7 @@
             <input type="number" id="planTargetKcal" class="search-input" value="1600" step="50" min="800" max="4500" onchange="onPlannerSettingsChange()">
           </div>
           <div style="display:flex; gap:8px;">
-            <button class="btn btn-primary" style="flex:1; justify-content:center; padding:10px 16px;" onclick="generateMealPlan(false)">
+            <button class="btn btn-primary" style="flex:1; justify-content:center; padding:10px 14px;" onclick="generateMealPlan(false)">
               🎲 Пересобрать рацион
             </button>
             <button class="btn" title="Сбросить все закрепления и собрать заново" onclick="generateMealPlan(true)">
@@ -631,8 +848,8 @@
             </button>
           </div>
         </div>
-        <div class="planner-hint">
-          💡 <strong>Как это работает:</strong> генератор подбирает <strong>Завтрак, Обед, Ужин и Перекус/Десерт</strong> так, чтобы продукты из холодильника и между днями максимально пересекались (никаких остатков по полпачки!), но сами блюда были разнообразными. Если десерт или блюдо слишком калорийное, умный алгоритм автоматически уменьшит порцию (например, до <strong>0.5</strong> или <strong>0.75</strong>), либо вы можете подкрутить порцию вручную кнопками <strong>«– / +»</strong>.
+        <div class="planner-hint" id="plannerModeHint">
+          💡 <strong>Режим 1 (Экономия):</strong> блюда разные, но алгоритм прежде всего берет продукты из вашего холодильника и старается максимально пересекать ингредиенты между днями. Десерты выбираются строго из категории <strong>«Десерты»</strong> с автоподбором порции!
         </div>
       </div>
 
@@ -747,7 +964,7 @@
   </div>
 
   <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxRisU-cQ-LXtUFrjQLhMVvTdxEGKFoBIuOCtXSCzWXkXlM8Dm38eyQECOajKAxAeRySw/exec';
+    const API_URL = '[https://script.google.com/macros/s/AKfycbxRisU-cQ-LXtUFrjQLhMVvTdxEGKFoBIuOCtXSCzWXkXlM8Dm38eyQECOajKAxAeRySw/exec](https://script.google.com/macros/s/AKfycbxRisU-cQ-LXtUFrjQLhMVvTdxEGKFoBIuOCtXSCzWXkXlM8Dm38eyQECOajKAxAeRySw/exec)';
 
     // 1. УМНАЯ НОРМАЛИЗАЦИЯ ПРОДУКТОВ (объединение синонимов, форм слов и буквы Ё -> Е)
     function canonicalizeTag(raw) {
@@ -954,7 +1171,7 @@
       if (c === 'Суп') return 'Супы';
       if (c === 'Салат') return 'Салаты';
       if (c === 'Завтрак') return 'Завтраки';
-      if (c === 'Десерт') return 'Десерты';
+      if (c === 'Десерт' || c === 'Выпечка' || c === 'Сладкое') return 'Десерты';
       if (c === 'Гарнир') return 'Гарниры';
       if (c === 'Боул') return 'Боулы';
       if (c === 'Закуска') return 'Закуски';
@@ -974,12 +1191,48 @@
     let mealPlan = JSON.parse(localStorage.getItem('my_meal_plan') || 'null');
     const PORTION_STEPS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2];
 
+    // Десерт берется СТРОГО из категории «Десерты»
     const MEAL_SLOTS = [
       { key: 'breakfast', label: '🌅 Завтрак', ratio: 0.26, preferredCats: ['Завтраки'] },
       { key: 'lunch',     label: '🍲 Обед',    ratio: 0.34, preferredCats: ['Супы', 'Горячее', 'Боулы', 'Гарниры'] },
       { key: 'dinner',    label: '🍽️ Ужин',    ratio: 0.25, preferredCats: ['Горячее', 'Салаты', 'Боулы', 'Гарниры'] },
-      { key: 'snack',     label: '🍰 Перекус / Десерт', ratio: 0.15, preferredCats: ['Десерты', 'Закуски', 'Салаты', 'Завтраки'] }
+      { key: 'snack',     label: '🍰 Десерт',  ratio: 0.15, preferredCats: ['Десерты'] }
     ];
+
+    // Конфигурация 3 режимов разнообразия продуктов
+    const VARIETY_MODES = {
+      strict: {
+        sharedWeight: 4.0,     // Сильное притяжение к продуктам других дней
+        fridgeWeight: 3.5,     // Сильный приоритет холодильнику
+        missingPenalty: -1.6,  // Штраф за новые продукты, которых нет дома
+        randomSpread: 3.5,
+        topN: 3,
+        hint: '💡 <strong>Режим 1 (Экономия):</strong> блюда разные, но продукты берутся прежде всего из вашего холодильника и максимально повторяются между днями. Десерты выбираются строго из категории <strong>«Десерты»</strong>.'
+      },
+      balanced: {
+        sharedWeight: 1.8,     // Умеренное совпадение между днями
+        fridgeWeight: 2.2,     // Умеренный бонус за холодильник
+        missingPenalty: -0.4,  // Мягкое отношение к новым продуктам для разнообразия
+        randomSpread: 6.5,
+        topN: 6,
+        hint: '💡 <strong>Режим 2 (Больше разнообразия продуктов):</strong> меню включает больше новых и разнообразных ингредиентов, но сохраняет разумные пересечения продуктов между днями. Десерты берутся строго из <strong>«Десертов»</strong>.'
+      },
+      random: {
+        sharedWeight: 0.0,     // Дни не привязаны друг к другу по продуктам
+        fridgeWeight: 2.8,     // Учитываем холодильник, но выбираем широко
+        missingPenalty: 0.0,   // Нет штрафа за новые продукты
+        randomSpread: 16.0,    // Высокий фактор случайности
+        topN: 12,
+        hint: '💡 <strong>Режим 3 (Полный рандом с учётом холодильника):</strong> максимальный полёт фантазии! Дни не зависят друг от друга по продуктам, но блюда с продуктами из вашего холодильника имеют повышенный шанс выпадения.'
+      }
+    };
+
+    function updateVarietyHint() {
+      const modeKey = document.getElementById('planVarietySelect').value || 'strict';
+      const cfg = VARIETY_MODES[modeKey] || VARIETY_MODES.strict;
+      const hintEl = document.getElementById('plannerModeHint');
+      if (hintEl) hintEl.innerHTML = cfg.hint;
+    }
 
     function switchAppMode(mode) {
       appMode = mode;
@@ -1060,16 +1313,18 @@
     // ================= ЛОГИКА УМНОГО КОНСТРУКТОРА РАЦИОНА =================
     function getPoolForSlot(slotKey) {
       const slotDef = MEAL_SLOTS.find(s => s.key === slotKey);
+      // Для десерта берем СТРОГО рецепты из категории «Десерты»
       let pool = recipes.filter(r => slotDef.preferredCats.includes(r.category));
-      if (pool.length === 0) pool = [...recipes];
+      if (pool.length === 0 && slotKey !== 'snack') {
+        pool = [...recipes];
+      }
       return pool;
     }
 
-    // Подбор оптимальной порции (особенно важно для десертов и перекусов)
     function pickBestPortion(recipeKcal, targetSlotKcal, slotKey) {
       if (!recipeKcal || recipeKcal <= 0) return 1;
       const allowedSteps = slotKey === 'snack'
-        ? [0.25, 0.5, 0.75, 1] // Для десертов/перекусов охотно уменьшаем порцию до 0.5 или 0.75
+        ? [0.25, 0.5, 0.75, 1] // Для десертов охотно уменьшаем порцию
         : [0.5, 0.75, 1, 1.25, 1.5];
 
       let bestStep = 1;
@@ -1087,6 +1342,7 @@
     function onPlannerSettingsChange() {
       const daysCount = Number(document.getElementById('planDaysSelect').value) || 3;
       const targetKcal = Number(document.getElementById('planTargetKcal').value) || 1600;
+      const varietyMode = document.getElementById('planVarietySelect').value || 'strict';
 
       if (!mealPlan) {
         generateMealPlan(false);
@@ -1094,10 +1350,11 @@
       }
 
       mealPlan.targetKcal = targetKcal;
+      mealPlan.varietyMode = varietyMode;
+
       if (mealPlan.days.length !== daysCount) {
         generateMealPlan(false);
       } else {
-        // Пересчитываем оптимальные порции под новую цель калорий
         mealPlan.days.forEach(day => {
           MEAL_SLOTS.forEach(slot => {
             const cell = day.meals[slot.key];
@@ -1114,13 +1371,51 @@
       }
     }
 
+    function scoreCandidateRecipe(r, slotKey, targetSlotKcal, planIngredients, usedRecipeCounts, prevDayRecipeId, poolLength, modeCfg) {
+      let score = 0;
+
+      // 1. Оценка продуктов по выбранному режиму (1: Экономия, 2: Баланс, 3: Рандом с холодильником)
+      r.tags.forEach(t => {
+        const inFridge = fridge.has(t);
+        const inPlan = planIngredients.has(t);
+
+        if (inFridge) {
+          score += modeCfg.fridgeWeight;
+        }
+        if (inPlan) {
+          score += modeCfg.sharedWeight;
+        }
+        if (!inFridge && !inPlan) {
+          score += modeCfg.missingPenalty;
+        }
+      });
+
+      // 2. Разнообразие блюд (штраф за повторы одного и того же рецепта)
+      const timesUsed = usedRecipeCounts[r.id] || 0;
+      if (r.id === prevDayRecipeId && poolLength > 1) score -= 30;
+      score -= timesUsed * 10;
+
+      // 3. Соответствие целевой калорийности слота с учетом умного масштабирования порции
+      const bestPortion = pickBestPortion(r.calories, targetSlotKcal, slotKey);
+      const kcalDiff = Math.abs((r.calories * bestPortion) - targetSlotKcal);
+      score -= (kcalDiff / 130);
+
+      // 4. Случайный разброс в зависимости от режима
+      score += Math.random() * modeCfg.randomSpread;
+
+      return { recipe: r, score, bestPortion };
+    }
+
     function generateMealPlan(resetPins = false) {
       if (recipes.length === 0) return;
 
       const daysCount = Number(document.getElementById('planDaysSelect').value) || 3;
       const targetKcal = Number(document.getElementById('planTargetKcal').value) || 1600;
+      const varietyMode = document.getElementById('planVarietySelect').value || 'strict';
+      const modeCfg = VARIETY_MODES[varietyMode] || VARIETY_MODES.strict;
 
-      // Собираем пул продуктов, которые уже задействованы в рационе (для максимального пересечения)
+      updateVarietyHint();
+
       const planIngredients = new Set();
       const usedRecipeCounts = {};
 
@@ -1131,13 +1426,14 @@
 
         MEAL_SLOTS.forEach(slot => {
           const prevCell = existingDay && existingDay.meals ? existingDay.meals[slot.key] : null;
-          if (prevCell && prevCell.pinned && recipes.some(r => r.id === prevCell.recipeId)) {
+          const prevRec = prevCell ? recipes.find(r => r.id === prevCell.recipeId) : null;
+          // Проверяем, что закрепленный десерт действительно из категории Десерты
+          const validCategory = prevRec && (slot.key !== 'snack' || prevRec.category === 'Десерты');
+
+          if (prevCell && prevCell.pinned && validCategory) {
             mealsObj[slot.key] = { ...prevCell };
-            const rec = recipes.find(r => r.id === prevCell.recipeId);
-            if (rec) {
-              rec.tags.forEach(t => planIngredients.add(t));
-              usedRecipeCounts[rec.id] = (usedRecipeCounts[rec.id] || 0) + 1;
-            }
+            prevRec.tags.forEach(t => planIngredients.add(t));
+            usedRecipeCounts[prevRec.id] = (usedRecipeCounts[prevRec.id] || 0) + 1;
           } else {
             mealsObj[slot.key] = null;
           }
@@ -1151,43 +1447,21 @@
         const prevDay = d > 0 ? newDays[d - 1] : null;
 
         MEAL_SLOTS.forEach(slot => {
-          if (newDays[d].meals[slot.key]) return; // уже закреплен
+          if (newDays[d].meals[slot.key]) return;
 
           const pool = getPoolForSlot(slot.key);
+          if (pool.length === 0) return;
+
           const targetSlotKcal = targetKcal * slot.ratio;
           const prevDayRecipeId = prevDay && prevDay.meals[slot.key] ? prevDay.meals[slot.key].recipeId : null;
 
-          // Оцениваем каждого кандидата: баланс общих продуктов + холодильника + калорий + разнообразия
-          const scored = pool.map(r => {
-            let score = 0;
-
-            // 1. Совпадение с холодильником и уже набранной продуктовой корзиной рациона
-            r.tags.forEach(t => {
-              if (planIngredients.has(t)) score += 3.5; // Отлично! Продукт уже используется в других блюдах рациона
-              else if (fridge.has(t)) score += 2.5;     // Продукт уже есть дома в холодильнике
-              else score -= 1.2;                        // Новый продукт, который придется докупать
-            });
-
-            // 2. Штраф за повторы одного и того же блюда, чтобы было разнообразие
-            const timesUsed = usedRecipeCounts[r.id] || 0;
-            if (r.id === prevDayRecipeId && pool.length > 1) score -= 25; // Не повторять два дня подряд
-            score -= timesUsed * 8;
-
-            // 3. Оценка попадания в целевую калорийность слота с учетом умной порции
-            const bestPortion = pickBestPortion(r.calories, targetSlotKcal, slot.key);
-            const kcalDiff = Math.abs((r.calories * bestPortion) - targetSlotKcal);
-            score -= (kcalDiff / 120);
-
-            // 4. Небольшой случайный фактор для бесконечного разнообразия при пересборке
-            score += Math.random() * 4.5;
-
-            return { recipe: r, score, bestPortion };
-          });
+          const scored = pool.map(r =>
+            scoreCandidateRecipe(r, slot.key, targetSlotKcal, planIngredients, usedRecipeCounts, prevDayRecipeId, pool.length, modeCfg)
+          );
 
           scored.sort((a, b) => b.score - a.score);
-          // Выбираем случайного из топ-3 лучших кандидатов
-          const topN = scored.slice(0, Math.min(3, scored.length));
-          const chosen = topN[Math.floor(Math.random() * topN.length)];
+          const topCandidates = scored.slice(0, Math.min(modeCfg.topN, scored.length));
+          const chosen = topCandidates[Math.floor(Math.random() * topCandidates.length)];
 
           newDays[d].meals[slot.key] = {
             recipeId: chosen.recipe.id,
@@ -1203,6 +1477,7 @@
       mealPlan = {
         daysCount,
         targetKcal,
+        varietyMode,
         days: newDays
       };
 
@@ -1216,15 +1491,22 @@
       const currentCell = mealPlan.days[dayIdx].meals[slotKey];
       const slotDef = MEAL_SLOTS.find(s => s.key === slotKey);
       const pool = getPoolForSlot(slotKey);
+      if (pool.length === 0) return;
 
-      // Собираем продукты остальных блюд рациона
+      const varietyMode = document.getElementById('planVarietySelect').value || mealPlan.varietyMode || 'strict';
+      const modeCfg = VARIETY_MODES[varietyMode] || VARIETY_MODES.strict;
+
       const otherPlanIngs = new Set();
+      const usedRecipeCounts = {};
       mealPlan.days.forEach((d, dIdx) => {
         MEAL_SLOTS.forEach(s => {
           if (dIdx === dayIdx && s.key === slotKey) return;
           const cell = d.meals[s.key];
           const rec = cell ? recipes.find(r => r.id === cell.recipeId) : null;
-          if (rec) rec.tags.forEach(t => otherPlanIngs.add(t));
+          if (rec) {
+            rec.tags.forEach(t => otherPlanIngs.add(t));
+            usedRecipeCounts[rec.id] = (usedRecipeCounts[rec.id] || 0) + 1;
+          }
         });
       });
 
@@ -1232,19 +1514,12 @@
       const finalPool = candidates.length > 0 ? candidates : pool;
       const targetSlotKcal = (mealPlan.targetKcal || 1600) * slotDef.ratio;
 
-      const scored = finalPool.map(r => {
-        let score = Math.random() * 5;
-        r.tags.forEach(t => {
-          if (otherPlanIngs.has(t)) score += 3.5;
-          else if (fridge.has(t)) score += 2.5;
-          else score -= 1;
-        });
-        const bestPortion = pickBestPortion(r.calories, targetSlotKcal, slotKey);
-        return { recipe: r, score, bestPortion };
-      });
+      const scored = finalPool.map(r =>
+        scoreCandidateRecipe(r, slotKey, targetSlotKcal, otherPlanIngs, usedRecipeCounts, null, finalPool.length, modeCfg)
+      );
 
       scored.sort((a, b) => b.score - a.score);
-      const topCandidates = scored.slice(0, Math.min(4, scored.length));
+      const topCandidates = scored.slice(0, Math.min(modeCfg.topN, scored.length));
       const picked = topCandidates[Math.floor(Math.random() * topCandidates.length)];
 
       mealPlan.days[dayIdx].meals[slotKey] = {
@@ -1289,12 +1564,15 @@
 
       document.getElementById('planDaysSelect').value = String(mealPlan.days.length);
       document.getElementById('planTargetKcal').value = String(mealPlan.targetKcal || 1600);
+      if (mealPlan.varietyMode) {
+        document.getElementById('planVarietySelect').value = mealPlan.varietyMode;
+      }
+      updateVarietyHint();
 
       const daysContainer = document.getElementById('plannerDaysContainer');
       const targetKcal = mealPlan.targetKcal || 1600;
 
-      // Подсчет частоты использования каждого продукта во всем рационе
-      const ingUsageMap = {}; // tag -> { count, recipes: Set }
+      const ingUsageMap = {};
 
       const daysHTML = mealPlan.days.map((day, dIdx) => {
         let dayTotalKcal = 0;
@@ -1302,7 +1580,16 @@
         const slotsHTML = MEAL_SLOTS.map(slot => {
           const cell = day.meals[slot.key];
           const r = cell ? recipes.find(item => item.id === cell.recipeId) : null;
-          if (!r) return '';
+          if (!r) {
+            return `
+              <div class="meal-slot">
+                <div class="meal-slot-top">
+                  <span class="meal-type-label">${slot.label}</span>
+                </div>
+                <div style="font-size:0.85rem; color:var(--muted);">В таблице пока нет рецептов с категорией «Десерты»</div>
+              </div>
+            `;
+          }
 
           const portion = cell.portion || 1;
           const mealKcal = Math.round((r.calories || 0) * portion);
@@ -1317,7 +1604,7 @@
           return `
             <div class="meal-slot ${cell.pinned ? 'pinned' : ''}">
               <div class="meal-slot-top">
-                <span class="meal-type-label">${slot.label}</span>
+                <span class="meal-type-label">${slot.label} <span style="font-weight:600; opacity:0.75;">(${r.category})</span></span>
                 <div class="meal-slot-actions">
                   <button class="icon-btn ${cell.pinned ? 'active-pin' : ''}" onclick="togglePinSlot(${dIdx}, '${slot.key}')" title="${cell.pinned ? 'Открепить блюдо' : 'Закрепить блюдо (не менять при пересборке)'}">
                     📌
@@ -1372,7 +1659,7 @@
           <div>
             <h3 style="font-size:1.15rem; font-weight:800;">🛒 Продуктовая корзина на ${mealPlan.days.length} дн.</h3>
             <p style="font-size:0.84rem; color:var(--muted);">
-              Всего уникальных продуктов: <strong>${allPlanTags.length}</strong> (из них <strong>${sharedCount}</strong> используются сразу в нескольких блюдах рациона).
+              Всего уникальных продуктов: <strong>${allPlanTags.length}</strong> (из них <strong>${sharedCount}</strong> повторяются в нескольких приёмах пищи).
             </p>
           </div>
           ${missingTags.length > 0 ? `
@@ -1412,7 +1699,6 @@
 
     function addPlanMissingToCart() {
       if (!mealPlan || !mealPlan.days) return;
-      let addedCount = 0;
 
       mealPlan.days.forEach(day => {
         MEAL_SLOTS.forEach(slot => {
@@ -1427,7 +1713,6 @@
               if (!existing.recipes.includes(r.title)) existing.recipes.push(r.title);
             } else {
               cart.push({ name: prod, checked: false, recipes: [r.title] });
-              addedCount++;
             }
           });
         });
