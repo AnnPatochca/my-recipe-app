@@ -264,7 +264,8 @@
 
     .card-top { display: flex; justify-content: space-between; gap: 6px; align-items: center; flex-wrap: wrap; }
     .card-cat { font-size: 0.7rem; text-transform: uppercase; font-weight: 700; color: var(--muted); background: #f1f5f9; padding: 3px 8px; border-radius: 6px; }
-    .card-badges { display: flex; gap: 6px; align-items: center; }
+    .card-badges { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+    .card-servings { font-size: 0.73rem; font-weight: 700; background: #f1f5f9; color: #334155; padding: 2px 7px; border-radius: 6px; }
     .card-kcal { font-size: 0.75rem; font-weight: 700; background: #fff7ed; color: #c2410c; border: 1px solid #ffedd5; padding: 2px 7px; border-radius: 6px; }
     .card-match { font-size: 0.75rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; }
     .match-0 { background: #ecfdf5; color: #047857; }
@@ -272,6 +273,24 @@
     .match-many { background: #fef2f2; color: #b91c1c; }
 
     .card-title { font-size: 1.06rem; font-weight: 700; color: #0f172a; line-height: 1.35; }
+
+    .macro-pills {
+      display: inline-flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      font-size: 0.73rem;
+      font-weight: 700;
+    }
+    .macro-pill {
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      color: #334155;
+    }
+    .macro-p { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+    .macro-f { background: #fefce8; color: #a16207; border-color: #fef08a; }
+    .macro-c { background: #f3e8ff; color: #7e22ce; border-color: #e9d5ff; }
 
     .card-tags { display: flex; flex-wrap: wrap; gap: 5px; }
     .tag { font-size: 0.74rem; padding: 2px 7px; border-radius: 5px; cursor: pointer; }
@@ -327,7 +346,7 @@
 
     .days-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
       gap: 18px;
     }
     .day-card {
@@ -342,10 +361,16 @@
     }
     .day-header {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      gap: 8px;
       padding-bottom: 10px;
       border-bottom: 2px solid var(--border);
+    }
+    .day-header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
     }
     .day-title { font-size: 1.1rem; font-weight: 800; color: var(--text); }
     .day-kcal-badge {
@@ -356,6 +381,18 @@
     }
     .kcal-ok { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
     .kcal-warn { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+
+    .day-macros-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f8fafc;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
 
     .meal-slot {
       background: #f8fafc;
@@ -410,12 +447,23 @@
     }
     .meal-recipe-title:hover { color: var(--accent-hover); text-decoration: underline; }
 
+    .meal-scaled-ings {
+      font-size: 0.78rem;
+      color: #475569;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 6px 8px;
+      white-space: pre-line;
+      line-height: 1.4;
+    }
+
     .meal-portion-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 6px;
       padding-top: 6px;
       border-top: 1px dashed var(--border);
     }
@@ -438,7 +486,7 @@
       padding: 0 4px;
     }
     .portion-btn:hover { color: var(--accent); }
-    .portion-val { font-size: 0.78rem; font-weight: 700; min-width: 62px; text-align: center; }
+    .portion-val { font-size: 0.76rem; font-weight: 700; min-width: 80px; text-align: center; }
     .meal-kcal-info { font-size: 0.8rem; font-weight: 700; color: #c2410c; }
 
     .planner-summary-card {
@@ -457,19 +505,20 @@
     }
     .summary-chip {
       font-size: 0.82rem;
-      padding: 5px 10px;
+      padding: 6px 10px;
       border-radius: 8px;
       display: inline-flex;
       align-items: center;
       gap: 6px;
       cursor: pointer;
     }
-    .summary-chip-count {
-      background: rgba(0,0,0,0.08);
-      padding: 1px 6px;
-      border-radius: 99px;
-      font-size: 0.72rem;
+    .summary-chip-amount {
+      background: rgba(255,255,255,0.75);
+      padding: 1px 7px;
+      border-radius: 6px;
+      font-size: 0.75rem;
       font-weight: 800;
+      color: #0f172a;
     }
 
     /* Модальные окна */
@@ -515,9 +564,98 @@
     .modal-cat { font-size: 0.75rem; text-transform: uppercase; color: var(--accent); font-weight: 800; margin-bottom: 4px; }
     .modal-title { font-size: 1.4rem; font-weight: 800; margin-bottom: 12px; padding-right: 30px; }
     .modal-section { margin-bottom: 18px; }
-    .modal-section h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 8px; color: #334155; }
+    .modal-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .modal-section h4 { font-size: 0.95rem; font-weight: 700; color: #334155; }
     .modal-raw-ings { background: #f8fafc; padding: 12px 16px; border-radius: 10px; border-left: 4px solid var(--accent); font-size: 0.92rem; margin-bottom: 12px; white-space: pre-line; }
-    .modal-steps { white-space: pre-line; font-size: 0.95rem; color: #1e293b; line-height: 1.6; }
+    .modal-steps { white-space: pre-line; font-size: 0.95rem; color: #1e293b; line-height: 1.75; }
+
+    /* Интерактивные кнопки авто-таймеров в тексте рецепта */
+    .inline-timer-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin: 0 4px;
+      padding: 2px 9px;
+      border-radius: 99px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+      vertical-align: baseline;
+      transition: all 0.15s;
+    }
+    .inline-timer-btn:hover { background: #dbeafe; transform: scale(1.03); }
+    .inline-timer-btn.running {
+      background: #fef3c7;
+      color: #b45309;
+      border-color: #fde68a;
+      animation: pulseTimer 1.5s infinite;
+    }
+    .inline-timer-btn.done {
+      background: #ecfdf5;
+      color: #047857;
+      border-color: #a7f3d0;
+    }
+    @keyframes pulseTimer {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.35); }
+      50% { box-shadow: 0 0 0 5px rgba(245, 158, 11, 0); }
+    }
+
+    /* Плавающая панель активных таймеров */
+    .floating-timers {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 150;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: 320px;
+      width: calc(100vw - 40px);
+      pointer-events: none;
+    }
+    .timer-toast {
+      pointer-events: auto;
+      background: #0f172a;
+      color: #fff;
+      padding: 12px 14px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      border-left: 4px solid var(--accent);
+    }
+    .timer-toast.finished {
+      background: #065f46;
+      border-left-color: #fde047;
+      animation: pulseTimer 1s infinite;
+    }
+    .timer-toast-info { display: flex; flex-direction: column; gap: 2px; }
+    .timer-toast-title { font-size: 0.78rem; color: #cbd5e1; font-weight: 600; }
+    .timer-toast-time { font-size: 1.1rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .timer-toast-actions { display: flex; gap: 6px; }
+    .timer-mini-btn {
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: #fff;
+      padding: 5px 9px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+    .timer-mini-btn:hover { background: rgba(255,255,255,0.28); }
 
     .form-group { margin-bottom: 12px; }
     .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; }
@@ -525,8 +663,22 @@
       width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.9rem;
     }
 
-    /* Стили списка покупок */
-    .cart-list { display: flex; flex-direction: column; gap: 8px; margin: 14px 0; max-height: 45vh; overflow-y: auto; padding-right: 4px; }
+    /* Стили списка покупок с группировкой по отделам супермаркета */
+    .cart-list { display: flex; flex-direction: column; gap: 14px; margin: 14px 0; max-height: 50vh; overflow-y: auto; padding-right: 4px; }
+    .cart-aisle-group { display: flex; flex-direction: column; gap: 6px; }
+    .cart-aisle-header {
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 800;
+      color: #334155;
+      background: #e2e8f0;
+      padding: 5px 10px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
     .cart-item {
       display: flex;
       justify-content: space-between;
@@ -537,10 +689,11 @@
       background: #f8fafc;
       gap: 10px;
     }
-    .cart-item.checked { opacity: 0.6; background: #f1f5f9; }
+    .cart-item.checked { opacity: 0.55; background: #f1f5f9; }
     .cart-item.checked .cart-item-name { text-decoration: line-through; }
     .cart-item-left { display: flex; align-items: center; gap: 10px; cursor: pointer; flex: 1; }
     .cart-item-name { font-weight: 700; font-size: 0.92rem; }
+    .cart-item-amount { font-size: 0.8rem; font-weight: 700; color: #1d4ed8; background: #dbeafe; padding: 1px 7px; border-radius: 6px; margin-left: 6px; }
     .cart-item-recipes { font-size: 0.75rem; color: var(--muted); }
     .cart-del-btn { background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 1rem; padding: 4px; }
     .cart-del-btn:hover { color: var(--danger); }
@@ -592,8 +745,9 @@
           <input type="text" id="recipeSearch" class="search-input" placeholder="🔍 Поиск рецепта по названию или ингредиенту..." oninput="renderRecipes()">
           <select id="sortSelect" class="select-input" onchange="renderRecipes()">
             <option value="match">Сначала то, что можно приготовить</option>
-            <option value="kcal_asc">По калориям (сначала легкие)</option>
-            <option value="kcal_desc">По калориям (сначала сытные)</option>
+            <option value="kcal_asc">По калориям на 1 порцию (легкие)</option>
+            <option value="kcal_desc">По калориям на 1 порцию (сытные)</option>
+            <option value="protein_desc">По белку (больше белка)</option>
             <option value="title">По алфавиту (А–Я)</option>
           </select>
         </div>
@@ -640,9 +794,7 @@
             </button>
           </div>
         </div>
-        <div class="planner-hint" id="plannerModeHint">
-          💡 <strong>Режим 1 (Экономия):</strong> блюда разные, но продукты берутся прежде всего из вашего холодильника и максимально повторяются между днями. Десерты выбираются строго из категории <strong>«Десерты»</strong>.
-        </div>
+        <div class="planner-hint" id="plannerModeHint"></div>
       </div>
 
       <div class="days-grid" id="plannerDaysContainer"></div>
@@ -650,6 +802,9 @@
       <div class="planner-summary-card" id="plannerSummaryContainer"></div>
     </main>
   </div>
+
+  <!-- Плавающая панель активных таймеров -->
+  <div class="floating-timers" id="floatingTimersContainer"></div>
 
   <!-- Модальное окно просмотра рецепта -->
   <div class="modal-backdrop" id="recipeModal" onclick="if(event.target===this) closeRecipeModal()">
@@ -664,16 +819,25 @@
       </div>
 
       <div class="modal-section">
-        <h4>Точный состав, КБЖУ и пропорции по рецепту:</h4>
+        <div class="modal-section-header">
+          <h4>Точный состав, КБЖУ и пропорции по рецепту:</h4>
+          <div class="portion-controls">
+            <button class="portion-btn" onclick="changeModalPortion(-1)">−</button>
+            <span class="portion-val" id="mPortionVal">1 порция</span>
+            <button class="portion-btn" onclick="changeModalPortion(1)">+</button>
+          </div>
+        </div>
+        <div style="font-size:0.78rem; color:var(--muted); margin-bottom:6px;" id="mBaseServingsNote"></div>
         <div class="modal-raw-ings" id="mRawIngs"></div>
+        <div id="mMacrosBar" style="margin-top:8px;"></div>
       </div>
 
       <div class="modal-section">
-        <h4>Приготовление:</h4>
+        <h4>Приготовление (нажмите на ⏱️ время в тексте, чтобы запустить таймер):</h4>
         <div class="modal-steps" id="mSteps"></div>
       </div>
 
-      <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); padding-top:14px; margin-top:16px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); padding-top:14px; margin-top:16px; flex-wrap:wrap; gap:10px;">
         <span id="mKcal" style="font-weight:700; color:#c2410c;"></span>
         <button class="btn btn-cart" id="mAddMissingBtn">🛒 Докупить недостающее</button>
       </div>
@@ -684,7 +848,7 @@
   <div class="modal-backdrop" id="cartModal" onclick="if(event.target===this) closeCartModal()">
     <div class="modal">
       <button class="modal-close" onclick="closeCartModal()">✕</button>
-      <div class="modal-cat">Корзина</div>
+      <div class="modal-cat">Корзина по отделам супермаркета</div>
       <h2 class="modal-title">🛒 Список покупок</h2>
 
       <div style="display:flex; gap:8px; margin-bottom:12px;">
@@ -696,7 +860,7 @@
 
       <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:16px; border-top:1px solid var(--border); padding-top:14px;">
         <button class="btn btn-primary" onclick="moveBoughtToFridge()">✨ Перенести купленное в холодильник</button>
-        <button class="btn btn-cart" onclick="copyCartToClipboard()">📋 Скопировать список</button>
+        <button class="btn btn-cart" onclick="copyCartToClipboard()">📋 Скопировать по отделам</button>
         <button class="btn" style="margin-left:auto; color:var(--danger);" onclick="clearCart()">Очистить всё</button>
       </div>
     </div>
@@ -714,10 +878,10 @@
           <label>Название блюда *</label>
           <input type="text" id="fTitle" required placeholder="Например: Сырники с изюмом">
         </div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
           <div class="form-group">
             <label>Категория *</label>
-            <input type="text" id="fCategory" list="catSuggestions" required placeholder="Завтраки, Супы, Горячее...">
+            <input type="text" id="fCategory" list="catSuggestions" required placeholder="Завтраки...">
             <datalist id="catSuggestions">
               <option value="Завтраки">
               <option value="Супы">
@@ -731,8 +895,26 @@
             </datalist>
           </div>
           <div class="form-group">
-            <label>Калорийность (ккал на 1 порцию)</label>
+            <label>На сколько порций рецепт *</label>
+            <input type="number" id="fServings" value="1" min="0.5" step="0.5" required placeholder="2">
+          </div>
+          <div class="form-group">
+            <label>Калории (на 1 порцию)</label>
             <input type="number" id="fCalories" placeholder="320">
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
+          <div class="form-group">
+            <label>Белки (г на 1 порц.)</label>
+            <input type="number" id="fProtein" placeholder="Авто или число">
+          </div>
+          <div class="form-group">
+            <label>Жиры (г на 1 порц.)</label>
+            <input type="number" id="fFat" placeholder="Авто или число">
+          </div>
+          <div class="form-group">
+            <label>Углеводы (г на 1 порц.)</label>
+            <input type="number" id="fCarbs" placeholder="Авто или число">
           </div>
         </div>
         <div class="form-group">
@@ -740,12 +922,12 @@
           <input type="text" id="fTags" required placeholder="творог, яйца, мука, сахар, растительное масло">
         </div>
         <div class="form-group">
-          <label>Точный состав, бренды и пропорции *</label>
-          <textarea id="fIngredients" rows="3" required placeholder="Творог мягкий 5% — 400 г, Йогурт TEOS — 100 г, Яйцо — 1 шт."></textarea>
+          <label>Точный состав и пропорции (на всё количество порций выше) *</label>
+          <textarea id="fIngredients" rows="3" required placeholder="Творог 5% — 400 г, Яйца — 2 шт., Мука — 3 ст. л."></textarea>
         </div>
         <div class="form-group">
           <label>Шаги приготовления *</label>
-          <textarea id="fSteps" rows="5" required placeholder="1. Разомните творог...&#10;2. Сформируйте сырники..."></textarea>
+          <textarea id="fSteps" rows="5" required placeholder="1. Разомните творог...&#10;2. Обжаривайте 4 минуты с каждой стороны..."></textarea>
         </div>
         <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px;">
           <button type="button" class="btn" onclick="closeAddModal()">Отмена</button>
@@ -758,7 +940,6 @@
   <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycbxRisU-cQ-LXtUFrjQLhMVvTdxEGKFoBIuOCtXSCzWXkXlM8Dm38eyQECOajKAxAeRySw/exec';
 
-    // Универсальное чтение полей из строки Google Таблицы (поддерживает и английские, и русские заголовки)
     function pickField(item, keys) {
       if (!item || typeof item !== 'object') return '';
       for (const k of keys) {
@@ -768,10 +949,10 @@
       }
       const lowerMap = {};
       Object.keys(item).forEach(origKey => {
-        lowerMap[origKey.trim().toLowerCase()] = item[origKey];
+        lowerMap[origKey.trim().toLowerCase().replace(/ё/g, 'е')] = item[origKey];
       });
       for (const k of keys) {
-        const val = lowerMap[k.toLowerCase()];
+        const val = lowerMap[k.toLowerCase().replace(/ё/g, 'е')];
         if (val !== undefined && val !== null && String(val).trim() !== '') {
           return val;
         }
@@ -779,7 +960,347 @@
       return '';
     }
 
-    // 1. УМНАЯ НОРМАЛИЗАЦИЯ ПРОДУКТОВ (объединение синонимов, форм слов и буквы Ё -> Е)
+    // ================= 1. АВТОМАТИЧЕСКИЙ ПОДСЧЁТ БЖУ (БЕЛКИ / ЖИРЫ / УГЛЕВОДЫ) =================
+    function extractOrEstimateMacros(item, calories, category, canonicalTags, ingredientsText) {
+      // Уровень 1: Ищем прямые колонки в таблице
+      const pCol = parseFloat(String(pickField(item, ['protein', 'proteins', 'белки', 'белок', 'б'])).replace(',', '.'));
+      const fCol = parseFloat(String(pickField(item, ['fat', 'fats', 'жиры', 'жир', 'ж'])).replace(',', '.'));
+      const cCol = parseFloat(String(pickField(item, ['carbs', 'carbohydrates', 'углеводы', 'углевод', 'у'])).replace(',', '.'));
+
+      if (!isNaN(pCol) && !isNaN(fCol) && !isNaN(cCol) && (pCol + fCol + cCol > 0)) {
+        return { p: Math.round(pCol), f: Math.round(fCol), c: Math.round(cCol), isExact: true };
+      }
+
+      // Уровень 2: Ищем запись БЖУ внутри текста ингредиентов (например "Б: 24, Ж: 12, У: 35" или "БЖУ 24/12/35")
+      const text = String(ingredientsText || '');
+      const bjuSlash = text.match(/бжу\s*[:\-=]?\s*(\d+(?:[.,]\d+)?)\s*[\/|\\]\s*(\d+(?:[.,]\d+)?)\s*[\/|\\]\s*(\d+(?:[.,]\d+)?)/i);
+      if (bjuSlash) {
+        return {
+          p: Math.round(parseFloat(bjuSlash[1].replace(',', '.'))),
+          f: Math.round(parseFloat(bjuSlash[2].replace(',', '.'))),
+          c: Math.round(parseFloat(bjuSlash[3].replace(',', '.'))),
+          isExact: true
+        };
+      }
+
+      const pMatch = text.match(/(?:белк[иа]?|\bб)\s*[:\-=]?\s*(\d+(?:[.,]\d+)?)\s*г?/i);
+      const fMatch = text.match(/(?:жир[ыа]?|\bж)\s*[:\-=]?\s*(\d+(?:[.,]\d+)?)\s*г?/i);
+      const cMatch = text.match(/(?:углевод[ыа]?|\bу)\s*[:\-=]?\s*(\d+(?:[.,]\d+)?)\s*г?/i);
+      if (pMatch && fMatch && cMatch) {
+        return {
+          p: Math.round(parseFloat(pMatch[1].replace(',', '.'))),
+          f: Math.round(parseFloat(fMatch[1].replace(',', '.'))),
+          c: Math.round(parseFloat(cMatch[1].replace(',', '.'))),
+          isExact: true
+        };
+      }
+
+      // Уровень 3: Умный расчёт БЖУ по калорийности, категории и составу продуктов
+      const kcal = calories > 0 ? calories : 280;
+      let pShare = 0.22, fShare = 0.33, cShare = 0.45;
+
+      const hasHighProteinTag = canonicalTags.some(t =>
+        t.includes('кури') || t.includes('индейк') || t.includes('говяд') || t.includes('фарш') ||
+        t.includes('рыба') || t.includes('тунец') || t.includes('горбуша') || t.includes('креветк') ||
+        t.includes('творог') || t.includes('протеин') || t.includes('яйца') || t.includes('кальмар')
+      );
+      const hasCarbTag = canonicalTags.some(t =>
+        t.includes('паста') || t.includes('рис') || t.includes('греч') || t.includes('овсян') ||
+        t.includes('картофель') || t.includes('мука') || t.includes('хлеб') || t.includes('крупа')
+      );
+
+      if (category === 'Десерты') {
+        if (canonicalTags.includes('творог') || canonicalTags.includes('протеин')) {
+          pShare = 0.28; fShare = 0.27; cShare = 0.45;
+        } else {
+          pShare = 0.12; fShare = 0.35; cShare = 0.53;
+        }
+      } else if (category === 'Салаты') {
+        pShare = hasHighProteinTag ? 0.30 : 0.15;
+        fShare = 0.45;
+        cShare = 1 - pShare - fShare;
+      } else if (category === 'Горячее' || category === 'Супы' || category === 'Боулы') {
+        if (hasHighProteinTag && !hasCarbTag) {
+          pShare = 0.40; fShare = 0.38; cShare = 0.22;
+        } else if (hasHighProteinTag && hasCarbTag) {
+          pShare = 0.30; fShare = 0.30; cShare = 0.40;
+        } else {
+          pShare = 0.18; fShare = 0.32; cShare = 0.50;
+        }
+      } else if (category === 'Завтраки') {
+        pShare = hasHighProteinTag ? 0.28 : 0.18;
+        fShare = 0.32;
+        cShare = 1 - pShare - fShare;
+      }
+
+      return {
+        p: Math.max(1, Math.round((kcal * pShare) / 4)),
+        f: Math.max(1, Math.round((kcal * fShare) / 9)),
+        c: Math.max(1, Math.round((kcal * cShare) / 4)),
+        isExact: false
+      };
+    }
+
+    // ================= 2. АВТО-ТАЙМЕРЫ В ТЕКСТЕ РЕЦЕПТА + ЗВУКОВОЙ СИГНАЛ =================
+    let activeTimers = {}; // timerId -> { id, label, totalSec, remainSec, intervalId, finished }
+    let audioCtx = null;
+
+    function playTimerAlarmSound() {
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+        if (!audioCtx) audioCtx = new AudioContextClass();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        // Мелодичный тройной сигнал кухонного таймера
+        const notes = [880, 1174.66, 1396.91, 1760];
+        notes.forEach((freq, idx) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.18);
+
+          gain.gain.setValueAtTime(0.001, audioCtx.currentTime + idx * 0.18);
+          gain.gain.exponentialRampToValueAtTime(0.25, audioCtx.currentTime + idx * 0.18 + 0.03);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.18 + 0.16);
+
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(audioCtx.currentTime + idx * 0.18);
+          osc.stop(audioCtx.currentTime + idx * 0.18 + 0.17);
+        });
+      } catch (e) {
+        console.warn('Не удалось воспроизвести звук:', e);
+      }
+    }
+
+    function formatTimeMMSS(sec) {
+      const s = Math.max(0, Math.floor(sec));
+      const hrs = Math.floor(s / 3600);
+      const mins = Math.floor((s % 3600) / 60);
+      const remSec = s % 60;
+      if (hrs > 0) {
+        return `${hrs}:${String(mins).padStart(2, '0')}:${String(remSec).padStart(2, '0')}`;
+      }
+      return `${String(mins).padStart(2, '0')}:${String(remSec).padStart(2, '0')}`;
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    /**
+     * Находит в тексте шагов фразы времени ("10 минут", "35-40 мин", "1,5 часа", "30 сек")
+     * и добавляет рядом интерактивную кнопку [⏱️ 10 мин]
+     */
+    function renderStepsWithTimers(stepsText, recipeTitle) {
+      if (!stepsText) return 'Описание шагов отсутствует';
+      const safeText = escapeHtml(stepsText);
+      let btnCounter = 0;
+
+      const timeRegex = /(\d+(?:[.,]\d+)?)(?:\s*(?:[-–—]|или)\s*(\d+(?:[.,]\d+)?))?\s*(час(?:а|ов)?|ч\b|минут(?:ы|у)?|мин\.?|секунд(?:ы|у)?|сек\.?)/gi;
+
+      return safeText.replace(timeRegex, (match, n1, n2, unitRaw) => {
+        const val1 = parseFloat(n1.replace(',', '.'));
+        const val2 = n2 ? parseFloat(n2.replace(',', '.')) : null;
+        if (isNaN(val1) || val1 <= 0) return match;
+
+        // Если указан диапазон (например 35-40 минут), берём верхнюю или среднюю границу
+        const targetVal = val2 && !isNaN(val2) ? val2 : val1;
+        const u = unitRaw.toLowerCase();
+        let seconds = 0;
+        let shortLabel = '';
+
+        if (u.startsWith('ч')) {
+          seconds = Math.round(targetVal * 3600);
+          shortLabel = `${targetVal} ч`;
+        } else if (u.startsWith('с')) {
+          seconds = Math.round(targetVal);
+          shortLabel = `${targetVal} сек`;
+        } else {
+          seconds = Math.round(targetVal * 60);
+          shortLabel = `${targetVal} мин`;
+        }
+
+        if (seconds <= 0 || seconds > 12 * 3600) return match;
+
+        btnCounter++;
+        const timerId = `tm_${recipeTitle.replace(/\W+/g, '_')}_${btnCounter}_${seconds}`;
+        const existing = activeTimers[timerId];
+        const btnClass = existing ? (existing.finished ? 'inline-timer-btn done' : 'inline-timer-btn running') : 'inline-timer-btn';
+        const btnText = existing
+          ? (existing.finished ? `🔔 Готово!` : `⏳ ${formatTimeMMSS(existing.remainSec)}`)
+          : `⏱️ ${shortLabel}`;
+
+        const safeLabel = `${recipeTitle} (${shortLabel})`.replace(/'/g, "\\'");
+
+        return `${match} <button type="button" class="${btnClass}" data-timer-id="${timerId}" onclick="toggleInlineTimer('${timerId}', ${seconds}, '${safeLabel}')">${btnText}</button>`;
+      });
+    }
+
+    function toggleInlineTimer(timerId, seconds, label) {
+      // Инициализируем AudioContext по клику пользователя, чтобы браузер разрешил звук
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass && !audioCtx) audioCtx = new AudioContextClass();
+        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+      } catch (e) {}
+
+      if (activeTimers[timerId]) {
+        stopAndRemoveTimer(timerId);
+        return;
+      }
+
+      const timerObj = {
+        id: timerId,
+        label: label,
+        totalSec: seconds,
+        remainSec: seconds,
+        finished: false,
+        intervalId: null
+      };
+
+      timerObj.intervalId = setInterval(() => {
+        if (timerObj.remainSec > 0) {
+          timerObj.remainSec -= 1;
+          updateTimerUI();
+        }
+        if (timerObj.remainSec <= 0 && !timerObj.finished) {
+          timerObj.finished = true;
+          clearInterval(timerObj.intervalId);
+          playTimerAlarmSound();
+          // Повторяем сигнал через 1.5 сек для надежности
+          setTimeout(() => {
+            if (activeTimers[timerId] && activeTimers[timerId].finished) playTimerAlarmSound();
+          }, 1500);
+          updateTimerUI();
+        }
+      }, 1000);
+
+      activeTimers[timerId] = timerObj;
+      updateTimerUI();
+    }
+
+    function stopAndRemoveTimer(timerId) {
+      const t = activeTimers[timerId];
+      if (t && t.intervalId) clearInterval(t.intervalId);
+      delete activeTimers[timerId];
+      updateTimerUI();
+      // Если открыто модальное окно рецепта — обновляем кнопки в тексте
+      if (currentModalRecipeId) {
+        const r = recipes.find(item => item.id === currentModalRecipeId);
+        if (r) document.getElementById('mSteps').innerHTML = renderStepsWithTimers(r.steps, r.title);
+      }
+    }
+
+    function updateTimerUI() {
+      // 1. Обновляем кнопки внутри открытого модального окна
+      Object.values(activeTimers).forEach(t => {
+        const btns = document.querySelectorAll(`[data-timer-id="${t.id}"]`);
+        btns.forEach(btn => {
+          btn.className = t.finished ? 'inline-timer-btn done' : 'inline-timer-btn running';
+          btn.textContent = t.finished ? '🔔 Готово! (сбросить)' : `⏳ ${formatTimeMMSS(t.remainSec)}`;
+        });
+      });
+
+      // 2. Обновляем плавающий виджет в правом нижнем углу
+      const container = document.getElementById('floatingTimersContainer');
+      const list = Object.values(activeTimers);
+      if (list.length === 0) {
+        container.innerHTML = '';
+        return;
+      }
+
+      container.innerHTML = list.map(t => `
+        <div class="timer-toast ${t.finished ? 'finished' : ''}">
+          <div class="timer-toast-info">
+            <span class="timer-toast-title">${t.label}</span>
+            <span class="timer-toast-time">${t.finished ? '🔔 Время вышло!' : '⏱️ ' + formatTimeMMSS(t.remainSec)}</span>
+          </div>
+          <div class="timer-toast-actions">
+            ${t.finished ? `<button class="timer-mini-btn" onclick="playTimerAlarmSound()">🔊</button>` : ''}
+            <button class="timer-mini-btn" onclick="stopAndRemoveTimer('${t.id}')">✕ Закрыть</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ================= МАТЕМАТИКА ПЕРЕСЧЕТА ПОРЦИЙ И ИНГРЕДИЕНТОВ =================
+    function formatScaledNum(val) {
+      if (val <= 0) return '0';
+      if (val >= 15) return String(Math.round(val));
+      const rounded = Math.round(val * 10) / 10;
+      return String(rounded).replace('.', ',');
+    }
+
+    function scaleIngredientsText(rawText, baseServings, desiredPortions) {
+      if (!rawText) return 'Не указано';
+      const base = Number(baseServings) > 0 ? Number(baseServings) : 1;
+      const target = Number(desiredPortions) > 0 ? Number(desiredPortions) : base;
+      const factor = target / base;
+
+      if (Math.abs(factor - 1) < 0.01) return rawText;
+
+      return rawText.replace(/(\d+(?:[.,]\d+)?)(?:\s*[-–—]\s*(\d+(?:[.,]\d+)?))?(?![0-9.,]*\s*(?:%|°|град))/g, (match, n1, n2, offset, fullStr) => {
+        const before = fullStr.slice(0, offset);
+        const after = fullStr.slice(offset + match.length);
+        if ((offset === 0 || /\n\s*$/.test(before)) && /^\.\s/.test(after)) {
+          return match;
+        }
+
+        const v1 = parseFloat(n1.replace(',', '.'));
+        if (isNaN(v1)) return match;
+        const s1 = formatScaledNum(v1 * factor);
+
+        if (n2 !== undefined) {
+          const v2 = parseFloat(n2.replace(',', '.'));
+          if (!isNaN(v2)) {
+            const s2 = formatScaledNum(v2 * factor);
+            return `${s1}–${s2}`;
+          }
+        }
+        return s1;
+      });
+    }
+
+    function extractIngredientAmountForTag(ingredientsText, canonicalTag, baseServings, desiredPortions) {
+      if (!ingredientsText) return null;
+      const base = Number(baseServings) > 0 ? Number(baseServings) : 1;
+      const target = Number(desiredPortions) > 0 ? Number(desiredPortions) : 1;
+      const factor = target / base;
+
+      const chunks = ingredientsText.split(/\n|;|,(?=\s*[А-ЯЁа-яёA-Za-z])/);
+      const tagWords = canonicalTag.split(/\s+/).filter(w => w.length >= 3);
+
+      for (const chunk of chunks) {
+        const cleanChunk = chunk.toLowerCase().replace(/ё/g, 'е');
+        const chunkCanonical = canonicalizeTag(cleanChunk.split(/[—\-:(\d]/)[0]);
+
+        const isMatch = chunkCanonical === canonicalTag ||
+                        cleanChunk.includes(canonicalTag) ||
+                        (tagWords.length > 0 && tagWords.every(w => cleanChunk.includes(w.slice(0, 4))));
+
+        if (isMatch) {
+          const withoutPercent = cleanChunk.replace(/\d+(?:[.,]\d+)?\s*%/g, '');
+          const m = withoutPercent.match(/(\d+(?:[.,]\d+)?)\s*(кг|г|гр|мл|л|шт\.?|зубч\.?|зуб\.?|ст\.?\s*л\.?|ч\.?\s*л\.?|стак\.?|пуч\.?|ломт\.?|бан\.?|уп\.?)?/i);
+          if (m) {
+            const rawVal = parseFloat(m[1].replace(',', '.'));
+            if (!isNaN(rawVal)) {
+              let unit = (m[2] || 'шт.').replace(/\s+/g, ' ').trim();
+              if (unit === 'гр') unit = 'г';
+              return { amount: rawVal * factor, unit };
+            }
+          }
+        }
+      }
+      return null;
+    }
+
+    // УМНАЯ НОРМАЛИЗАЦИЯ ПРОДУКТОВ
     function canonicalizeTag(raw) {
       if (!raw) return '';
       let s = String(raw).toLowerCase().replace(/ё/g, 'е').replace(/\s+/g, ' ').trim();
@@ -850,21 +1371,21 @@
       return s;
     }
 
-    // 2. СТРОГАЯ КЛАССИФИКАЦИЯ ПО КАТЕГОРИЯМ
+    // 3. КАТЕГОРИИ ХОЛОДИЛЬНИКА И ОТДЕЛЫ СУПЕРМАРКЕТА ДЛЯ КОРЗИНЫ
     const CATEGORY_ORDER = [
-      '🥛 Молочка и яйца',
-      '🥩 Белок (мясо, птица, рыба)',
       '🥦 Овощи, грибы и зелень',
       '🍎 Фрукты и ягоды',
-      '🌰 Орехи, семена и сухофрукты',
+      '🥛 Молочка и яйца',
+      '🥩 Белок (мясо, птица, рыба)',
       '🍝 Крупы, мука, паста и хлеб',
+      '🌰 Орехи, семена и сухофрукты',
       '🫒 Бакалея, масла, соусы и специи',
       '🍫 Сладости, спортпит и напитки',
       '📦 Прочее'
     ];
 
     function getProductCategory(ing) {
-      const s = ing.toLowerCase().replace(/ё/g, 'е').trim();
+      const s = String(ing || '').toLowerCase().replace(/ё/g, 'е').trim();
 
       if (
         s.includes('мука') || s.includes('крахмал') || s.includes('хлопья') || s.includes('крупа') ||
@@ -998,10 +1519,11 @@
     let cart = JSON.parse(localStorage.getItem('my_cart') || '[]');
     let activeCategory = 'Все';
     let currentModalRecipeId = null;
+    let currentModalPortions = 1;
     let appMode = 'catalog';
 
     let mealPlan = JSON.parse(localStorage.getItem('my_meal_plan') || 'null');
-    const PORTION_STEPS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2];
+    const PORTION_STEPS = [0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4];
 
     const MEAL_SLOTS = [
       { key: 'breakfast', label: '🌅 Завтрак', ratio: 0.26, preferredCats: ['Завтраки'] },
@@ -1017,7 +1539,7 @@
         missingPenalty: -1.6,
         randomSpread: 3.5,
         topN: 3,
-        hint: '💡 <strong>Режим 1 (Экономия):</strong> блюда разные, но продукты берутся прежде всего из вашего холодильника и максимально повторяются между днями. Десерты выбираются строго из категории <strong>«Десерты»</strong>.'
+        hint: '💡 <strong>Режим 1 (Экономия):</strong> блюда разные, но продукты берутся прежде всего из вашего холодильника и максимально повторяются между днями. Калории, БЖУ и граммовки пересчитываются под вашу порцию автоматически!'
       },
       balanced: {
         sharedWeight: 1.8,
@@ -1025,7 +1547,7 @@
         missingPenalty: -0.4,
         randomSpread: 6.5,
         topN: 6,
-        hint: '💡 <strong>Режим 2 (Больше разнообразия продуктов):</strong> меню включает больше новых и разнообразных ингредиентов, но сохраняет разумные пересечения продуктов между днями. Десерты берутся строго из <strong>«Десертов»</strong>.'
+        hint: '💡 <strong>Режим 2 (Больше разнообразия продуктов):</strong> меню включает больше новых ингредиентов, сохраняя совпадения продуктов между днями. Калории, БЖУ и граммовки автоматически масштабируются под порцию!'
       },
       random: {
         sharedWeight: 0.0,
@@ -1033,7 +1555,7 @@
         missingPenalty: 0.0,
         randomSpread: 16.0,
         topN: 12,
-        hint: '💡 <strong>Режим 3 (Полный рандом с учётом холодильника):</strong> максимальный полёт фантазии! Дни не зависят друг от друга по продуктам, но блюда с продуктами из вашего холодильника имеют повышенный шанс выпадения.'
+        hint: '💡 <strong>Режим 3 (Полный рандом с учётом холодильника):</strong> максимальный разброс блюд! При этом БЖУ, граммовки и штуки всех продуктов пересчитываются относительно базового количества порций в таблице.'
       }
     };
 
@@ -1095,6 +1617,7 @@
             const titleVal = pickField(item, ['title', 'название', 'блюдо', 'name']);
             const catVal = pickField(item, ['category', 'категория', 'тип']);
             const calVal = pickField(item, ['calories', 'калории', 'ккал', 'калорийность']);
+            const servingsVal = pickField(item, ['servings', 'portions', 'порции', 'порций', 'количество порций', 'кол-во порций']);
             const tagsVal = pickField(item, ['tags', 'теги', 'продукты', 'теги (продукты)']);
             const ingsVal = pickField(item, ['ingredients', 'ингредиенты', 'ингредиенты (текст)', 'состав']);
             const stepsVal = pickField(item, ['steps', 'шаги', 'шаги приготовления', 'приготовление', 'рецепт']);
@@ -1107,12 +1630,20 @@
 
             const canonicalTags = [...new Set(rawTags.map(canonicalizeTag).filter(Boolean))];
             const parsedCalories = parseInt(String(calVal).replace(/[^\d]/g, ''), 10) || 280;
+            const parsedServings = parseFloat(String(servingsVal).replace(',', '.').replace(/[^\d.]/g, '')) || 1;
+            const normCat = normalizeRecipeCategory(catVal);
+            const macros = extractOrEstimateMacros(item, parsedCalories, normCat, canonicalTags, ingsVal);
 
             return {
               id: String(idVal),
               title: String(titleVal || '').trim(),
-              category: normalizeRecipeCategory(catVal),
+              category: normCat,
+              servings: parsedServings > 0 ? parsedServings : 1,
               calories: parsedCalories,
+              protein: macros.p,
+              fat: macros.f,
+              carbs: macros.c,
+              macrosExact: macros.isExact,
               tags: canonicalTags,
               rawTags: rawTags,
               ingredients: String(ingsVal || ''),
@@ -1151,16 +1682,16 @@
       return pool;
     }
 
-    function pickBestPortion(recipeKcal, targetSlotKcal, slotKey) {
-      if (!recipeKcal || recipeKcal <= 0) return 1;
+    function pickBestPortion(recipeKcalPerServing, targetSlotKcal, slotKey) {
+      if (!recipeKcalPerServing || recipeKcalPerServing <= 0) return 1;
       const allowedSteps = slotKey === 'snack'
         ? [0.25, 0.5, 0.75, 1]
-        : [0.5, 0.75, 1, 1.25, 1.5];
+        : [0.5, 0.75, 1, 1.5, 2];
 
       let bestStep = 1;
       let minDiff = Infinity;
       for (const step of allowedSteps) {
-        const diff = Math.abs(recipeKcal * step - targetSlotKcal);
+        const diff = Math.abs(recipeKcalPerServing * step - targetSlotKcal);
         if (diff < minDiff) {
           minDiff = diff;
           bestStep = step;
@@ -1369,11 +1900,18 @@
     }
 
     function formatPortionLabel(p) {
-      if (p === 0.25) return '¼ порции (0.25x)';
-      if (p === 0.5) return '½ порции (0.5x)';
-      if (p === 0.75) return '¾ порции (0.75x)';
+      if (p === 0.25) return '¼ порции';
+      if (p === 0.5) return '½ порции';
+      if (p === 0.75) return '¾ порции';
       if (p === 1) return '1 порция';
+      if (p === 1.5) return '1,5 порции';
       return `${p} порции`;
+    }
+
+    function formatAggregatedAmounts(unitsMap, fallbackCount) {
+      const entries = Object.entries(unitsMap || {});
+      if (entries.length === 0) return `${fallbackCount}x в меню`;
+      return entries.map(([u, val]) => `${formatScaledNum(val)} ${u}`).join(' + ');
     }
 
     function renderMealPlan() {
@@ -1393,6 +1931,9 @@
 
       const daysHTML = mealPlan.days.map((day, dIdx) => {
         let dayTotalKcal = 0;
+        let dayTotalP = 0;
+        let dayTotalF = 0;
+        let dayTotalC = 0;
 
         const slotsHTML = MEAL_SLOTS.map(slot => {
           const cell = day.meals[slot.key];
@@ -1410,18 +1951,34 @@
 
           const portion = cell.portion || 1;
           const mealKcal = Math.round((r.calories || 0) * portion);
+          const mealP = Math.round((r.protein || 0) * portion);
+          const mealF = Math.round((r.fat || 0) * portion);
+          const mealC = Math.round((r.carbs || 0) * portion);
+
           dayTotalKcal += mealKcal;
+          dayTotalP += mealP;
+          dayTotalF += mealF;
+          dayTotalC += mealC;
+
+          const scaledIngsText = scaleIngredientsText(r.ingredients, r.servings, portion);
 
           r.tags.forEach(t => {
-            if (!ingUsageMap[t]) ingUsageMap[t] = { count: 0, recipes: new Set() };
+            if (!ingUsageMap[t]) ingUsageMap[t] = { count: 0, units: {}, recipes: new Set() };
             ingUsageMap[t].count += 1;
-            ingUsageMap[t].recipes.add(r.title);
+            ingUsageMap[t].recipes.add(`${r.title} (${formatPortionLabel(portion)})`);
+
+            const parsedAmt = extractIngredientAmountForTag(r.ingredients, t, r.servings, portion);
+            if (parsedAmt) {
+              ingUsageMap[t].units[parsedAmt.unit] = (ingUsageMap[t].units[parsedAmt.unit] || 0) + parsedAmt.amount;
+            }
           });
+
+          const scaleRatio = Math.round((portion / (r.servings || 1)) * 100) / 100;
 
           return `
             <div class="meal-slot ${cell.pinned ? 'pinned' : ''}">
               <div class="meal-slot-top">
-                <span class="meal-type-label">${slot.label} <span style="font-weight:600; opacity:0.75;">(${r.category})</span></span>
+                <span class="meal-type-label">${slot.label} <span style="font-weight:600; opacity:0.75;">(в рец.: ${r.servings} порц.)</span></span>
                 <div class="meal-slot-actions">
                   <button class="icon-btn ${cell.pinned ? 'active-pin' : ''}" onclick="togglePinSlot(${dIdx}, '${slot.key}')" title="${cell.pinned ? 'Открепить блюдо' : 'Закрепить блюдо (не менять при пересборке)'}">
                     📌
@@ -1431,11 +1988,17 @@
                   </button>
                 </div>
               </div>
-              <div class="meal-recipe-title" onclick="openRecipeModal('${r.id}')">
+              <div class="meal-recipe-title" onclick="openRecipeModal('${r.id}', ${portion})">
                 ${r.title}
               </div>
+              <div class="macro-pills">
+                <span class="macro-pill macro-p">Б: ${mealP} г</span>
+                <span class="macro-pill macro-f">Ж: ${mealF} г</span>
+                <span class="macro-pill macro-c">У: ${mealC} г</span>
+              </div>
+              ${scaledIngsText ? `<div class="meal-scaled-ings" title="Количество пересчитано под ${formatPortionLabel(portion)} (коэф. ${scaleRatio}x от рецепта)">${scaledIngsText}</div>` : ''}
               <div class="meal-portion-bar">
-                <div class="portion-controls" title="Изменить размер порции для регулировки калорий">
+                <div class="portion-controls" title="Изменить количество порций (продукты и БЖУ пересчитаются автоматически)">
                   <button class="portion-btn" onclick="changeSlotPortion(${dIdx}, '${slot.key}', -1)">−</button>
                   <span class="portion-val">${formatPortionLabel(portion)}</span>
                   <button class="portion-btn" onclick="changeSlotPortion(${dIdx}, '${slot.key}', 1)">+</button>
@@ -1452,10 +2015,20 @@
         return `
           <div class="day-card">
             <div class="day-header">
-              <span class="day-title">День ${day.dayNumber}</span>
-              <span class="day-kcal-badge ${kcalClass}">
-                Итого: ${dayTotalKcal} / ${targetKcal} ккал
-              </span>
+              <div class="day-header-top">
+                <span class="day-title">День ${day.dayNumber}</span>
+                <span class="day-kcal-badge ${kcalClass}">
+                  🔥 ${dayTotalKcal} / ${targetKcal} ккал
+                </span>
+              </div>
+              <div class="day-macros-bar">
+                <span>Суточное БЖУ:</span>
+                <div class="macro-pills">
+                  <span class="macro-pill macro-p">Белки: ${dayTotalP} г</span>
+                  <span class="macro-pill macro-f">Жиры: ${dayTotalF} г</span>
+                  <span class="macro-pill macro-c">Углеводы: ${dayTotalC} г</span>
+                </div>
+              </div>
             </div>
             ${slotsHTML}
           </div>
@@ -1473,9 +2046,9 @@
       summaryEl.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
           <div>
-            <h3 style="font-size:1.15rem; font-weight:800;">🛒 Продуктовая корзина на ${mealPlan.days.length} дн.</h3>
+            <h3 style="font-size:1.15rem; font-weight:800;">🛒 Расчёт продуктов на ${mealPlan.days.length} дн. (с учётом порций)</h3>
             <p style="font-size:0.84rem; color:var(--muted);">
-              Всего уникальных продуктов: <strong>${allPlanTags.length}</strong> (из них <strong>${sharedCount}</strong> повторяются в нескольких приёмах пищи).
+              Всего уникальных продуктов: <strong>${allPlanTags.length}</strong> (из них <strong>${sharedCount}</strong> используются в нескольких приёмах пищи). При отправке в список покупок товары автоматически разложатся по отделам супермаркета!
             </p>
           </div>
           ${missingTags.length > 0 ? `
@@ -1490,8 +2063,8 @@
             <h4 style="font-size:0.85rem; color:#991b1b; margin-bottom:8px; text-transform:uppercase;">Нужно докупить (${missingTags.length}):</h4>
             <div class="summary-ing-grid">
               ${missingTags.map(t => `
-                <span class="summary-chip tag-miss" onclick="toggleIngredient('${t.replace(/'/g, "\\'")}')" title="Кликните, если продукт уже есть дома">
-                  + ${t} <span class="summary-chip-count">${ingUsageMap[t].count}x</span>
+                <span class="summary-chip tag-miss" onclick="toggleIngredient('${t.replace(/'/g, "\\'")}')" title="Нужно для: ${[...ingUsageMap[t].recipes].join(', ')}">
+                  + ${t} <span class="summary-chip-amount">${formatAggregatedAmounts(ingUsageMap[t].units, ingUsageMap[t].count)}</span>
                 </span>
               `).join('')}
             </div>
@@ -1503,35 +2076,37 @@
             <h4 style="font-size:0.85rem; color:#065f46; margin-bottom:8px; text-transform:uppercase;">Уже есть в холодильнике (${haveTags.length}):</h4>
             <div class="summary-ing-grid">
               ${haveTags.map(t => `
-                <span class="summary-chip tag-have" onclick="toggleIngredient('${t.replace(/'/g, "\\'")}')">
-                  ✓ ${t} <span class="summary-chip-count">${ingUsageMap[t].count}x</span>
+                <span class="summary-chip tag-have" onclick="toggleIngredient('${t.replace(/'/g, "\\'")}')" title="Нужно для: ${[...ingUsageMap[t].recipes].join(', ')}">
+                  ✓ ${t} <span class="summary-chip-amount">${formatAggregatedAmounts(ingUsageMap[t].units, ingUsageMap[t].count)}</span>
                 </span>
               `).join('')}
             </div>
           </div>
         ` : ''}
       `;
+
+      window._lastPlanIngUsageMap = ingUsageMap;
     }
 
     function addPlanMissingToCart() {
       if (!mealPlan || !mealPlan.days) return;
+      const usageMap = window._lastPlanIngUsageMap || {};
 
-      mealPlan.days.forEach(day => {
-        MEAL_SLOTS.forEach(slot => {
-          const cell = day.meals[slot.key];
-          const r = cell ? recipes.find(item => item.id === cell.recipeId) : null;
-          if (!r) return;
+      Object.keys(usageMap).forEach(prod => {
+        if (fridge.has(prod)) return;
+        const info = usageMap[prod];
+        const amountStr = formatAggregatedAmounts(info.units, info.count);
+        const recList = [...info.recipes];
 
-          const miss = r.tags.filter(t => !fridge.has(t));
-          miss.forEach(prod => {
-            const existing = cart.find(c => canonicalizeTag(c.name) === prod);
-            if (existing) {
-              if (!existing.recipes.includes(r.title)) existing.recipes.push(r.title);
-            } else {
-              cart.push({ name: prod, checked: false, recipes: [r.title] });
-            }
+        const existing = cart.find(c => canonicalizeTag(c.name) === prod);
+        if (existing) {
+          existing.amount = amountStr;
+          recList.forEach(rt => {
+            if (!existing.recipes.includes(rt)) existing.recipes.push(rt);
           });
-        });
+        } else {
+          cart.push({ name: prod, amount: amountStr, checked: false, recipes: recList });
+        }
       });
 
       saveCart();
@@ -1618,7 +2193,7 @@
       renderFridge();
       renderRecipes();
       if (appMode === 'planner') renderMealPlan();
-      if (currentModalRecipeId) openRecipeModal(currentModalRecipeId);
+      if (currentModalRecipeId) openRecipeModal(currentModalRecipeId, currentModalPortions);
     }
 
     function selectBaseProducts() {
@@ -1669,6 +2244,7 @@
 
       if (sort === 'kcal_asc') filtered.sort((a, b) => a.calories - b.calories);
       else if (sort === 'kcal_desc') filtered.sort((a, b) => b.calories - a.calories);
+      else if (sort === 'protein_desc') filtered.sort((a, b) => (b.protein || 0) - (a.protein || 0));
       else if (sort === 'title') filtered.sort((a, b) => a.title.localeCompare(b.title, 'ru'));
       else filtered.sort((a, b) => a.missCount - b.missCount);
 
@@ -1714,16 +2290,22 @@
       const matchText = r.missCount === 0 ? 'Все продукты есть!' : `Не хватает: ${r.missCount}`;
 
       return `
-        <div class="recipe-card ${statusClass}" onclick="openRecipeModal('${r.id}')">
+        <div class="recipe-card ${statusClass}" onclick="openRecipeModal('${r.id}', ${r.servings || 1})">
           <div>
             <div class="card-top">
               <span class="card-cat">${r.category}</span>
               <div class="card-badges">
+                <span class="card-servings" title="Базовое количество порций в рецепте">🍽️ ${r.servings || 1} порц.</span>
                 ${r.calories ? `<span class="card-kcal">🔥 ${r.calories} ккал</span>` : ''}
                 <span class="card-match ${matchClass}">${matchText}</span>
               </div>
             </div>
             <div class="card-title" style="margin-top:10px;">${r.title}</div>
+            <div class="macro-pills" style="margin-top:8px;">
+              <span class="macro-pill macro-p">Б: ${r.protein} г</span>
+              <span class="macro-pill macro-f">Ж: ${r.fat} г</span>
+              <span class="macro-pill macro-c">У: ${r.carbs} г</span>
+            </div>
             <div class="card-tags" style="margin-top:10px;">
               ${r.tags.map(t => `
                 <span class="tag ${fridge.has(t) ? 'tag-have' : 'tag-miss'}">${t}</span>
@@ -1742,17 +2324,18 @@
       `;
     }
 
-    // Модальное окно просмотра рецепта
-    function openRecipeModal(id) {
+    // Модальное окно просмотра рецепта с калькулятором порций и авто-таймерами
+    function openRecipeModal(id, desiredPortions) {
       const r = recipes.find(item => item.id === id);
       if (!r) return;
       currentModalRecipeId = id;
+      currentModalPortions = desiredPortions !== undefined ? desiredPortions : (r.servings || 1);
 
       document.getElementById('mCat').textContent = r.category;
       document.getElementById('mTitle').textContent = r.title;
-      document.getElementById('mRawIngs').textContent = r.ingredients || 'Не указано';
-      document.getElementById('mSteps').textContent = r.steps || 'Описание шагов отсутствует';
-      document.getElementById('mKcal').textContent = r.calories ? `🔥 Калорийность (1 порция): ${r.calories} ккал` : '';
+      document.getElementById('mSteps').innerHTML = renderStepsWithTimers(r.steps, r.title);
+
+      updateModalPortionView(r);
 
       const tagsEl = document.getElementById('mTags');
       tagsEl.innerHTML = r.tags.map(t => `
@@ -1767,7 +2350,7 @@
         btn.style.display = 'inline-flex';
         btn.textContent = `🛒 Добавить недостающее в покупки (${miss.length})`;
         btn.onclick = () => {
-          addMissingToCart(r.id);
+          addMissingToCart(r.id, null, currentModalPortions);
           btn.textContent = '✓ Добавлено в список покупок';
         };
       } else {
@@ -1777,23 +2360,66 @@
       document.getElementById('recipeModal').classList.add('open');
     }
 
+    function updateModalPortionView(r) {
+      document.getElementById('mPortionVal').textContent = formatPortionLabel(currentModalPortions);
+      document.getElementById('mBaseServingsNote').textContent =
+        `В таблице рецепт указан на ${r.servings || 1} порц. Продукты и КБЖУ ниже пересчитаны на ${formatPortionLabel(currentModalPortions)}:`;
+      document.getElementById('mRawIngs').textContent = scaleIngredientsText(r.ingredients, r.servings, currentModalPortions);
+
+      const totalKcal = Math.round((r.calories || 0) * currentModalPortions);
+      const totalP = Math.round((r.protein || 0) * currentModalPortions);
+      const totalF = Math.round((r.fat || 0) * currentModalPortions);
+      const totalC = Math.round((r.carbs || 0) * currentModalPortions);
+
+      document.getElementById('mMacrosBar').innerHTML = `
+        <div class="macro-pills">
+          <span class="macro-pill macro-p">Белки: ${totalP} г</span>
+          <span class="macro-pill macro-f">Жиры: ${totalF} г</span>
+          <span class="macro-pill macro-c">Углеводы: ${totalC} г</span>
+          <span style="font-size:0.75rem; color:var(--muted); align-self:center;">
+            (${r.macrosExact ? 'точные данные из рецепта' : 'авторасчёт по составу'})
+          </span>
+        </div>
+      `;
+
+      document.getElementById('mKcal').textContent =
+        `🔥 Калорийность: ${totalKcal} ккал (по ${r.calories || 0} ккал на 1 порцию)`;
+    }
+
+    function changeModalPortion(deltaIdx) {
+      const r = recipes.find(item => item.id === currentModalRecipeId);
+      if (!r) return;
+      let idx = PORTION_STEPS.indexOf(currentModalPortions);
+      if (idx === -1) {
+        idx = PORTION_STEPS.findIndex(s => s >= currentModalPortions);
+        if (idx === -1) idx = PORTION_STEPS.length - 1;
+      }
+      const nextIdx = Math.max(0, Math.min(PORTION_STEPS.length - 1, idx + deltaIdx));
+      currentModalPortions = PORTION_STEPS[nextIdx];
+      updateModalPortionView(r);
+    }
+
     function closeRecipeModal() {
       currentModalRecipeId = null;
       document.getElementById('recipeModal').classList.remove('open');
     }
 
-    // Корзина (Список покупок)
-    function addMissingToCart(recipeId, btnEl) {
+    // ================= 3. УМНАЯ ГРУППИРОВКА СПИСКА ПОКУПОК ПО ОТДЕЛАМ СУПЕРМАРКЕТА =================
+    function addMissingToCart(recipeId, btnEl, customPortions) {
       const r = recipes.find(item => item.id === recipeId);
       if (!r) return;
+      const targetPortions = customPortions !== undefined ? customPortions : (r.servings || 1);
       const miss = r.tags.filter(t => !fridge.has(t));
 
       miss.forEach(prod => {
+        const parsed = extractIngredientAmountForTag(r.ingredients, prod, r.servings, targetPortions);
+        const amountLabel = parsed ? `${formatScaledNum(parsed.amount)} ${parsed.unit}` : '';
         const existing = cart.find(c => canonicalizeTag(c.name) === prod);
         if (existing) {
+          if (amountLabel && !existing.amount) existing.amount = amountLabel;
           if (!existing.recipes.includes(r.title)) existing.recipes.push(r.title);
         } else {
-          cart.push({ name: prod, checked: false, recipes: [r.title] });
+          cart.push({ name: prod, amount: amountLabel, checked: false, recipes: [r.title] });
         }
       });
 
@@ -1820,25 +2446,55 @@
         return;
       }
 
-      container.innerHTML = cart.map((item, idx) => `
-        <div class="cart-item ${item.checked ? 'checked' : ''}">
-          <div class="cart-item-left" onclick="toggleCartItem(${idx})">
-            <input type="checkbox" ${item.checked ? 'checked' : ''} style="width:18px; height:18px; pointer-events:none;">
-            <div>
-              <div class="cart-item-name">${item.name}</div>
-              ${item.recipes && item.recipes.length ? `<div class="cart-item-recipes">Для: ${item.recipes.join(', ')}</div>` : ''}
+      // Группируем товары по отделам супермаркета
+      const grouped = {};
+      CATEGORY_ORDER.forEach(cat => grouped[cat] = []);
+
+      cart.forEach((item, idx) => {
+        const aisle = getProductCategory(canonicalizeTag(item.name) || item.name);
+        if (!grouped[aisle]) grouped[aisle] = [];
+        grouped[aisle].push({ item, idx });
+      });
+
+      let html = '';
+      for (const aisleName of CATEGORY_ORDER) {
+        const entries = grouped[aisleName] || [];
+        if (entries.length === 0) continue;
+        const boughtCount = entries.filter(e => e.item.checked).length;
+
+        html += `
+          <div class="cart-aisle-group">
+            <div class="cart-aisle-header">
+              <span>${aisleName}</span>
+              <span>${boughtCount}/${entries.length}</span>
             </div>
+            ${entries.map(({ item, idx }) => `
+              <div class="cart-item ${item.checked ? 'checked' : ''}">
+                <div class="cart-item-left" onclick="toggleCartItem(${idx})">
+                  <input type="checkbox" ${item.checked ? 'checked' : ''} style="width:18px; height:18px; pointer-events:none;">
+                  <div>
+                    <div>
+                      <span class="cart-item-name">${item.name}</span>
+                      ${item.amount ? `<span class="cart-item-amount">${item.amount}</span>` : ''}
+                    </div>
+                    ${item.recipes && item.recipes.length ? `<div class="cart-item-recipes">Для: ${item.recipes.join(', ')}</div>` : ''}
+                  </div>
+                </div>
+                <button class="cart-del-btn" onclick="removeCartItem(${idx})" title="Удалить">✕</button>
+              </div>
+            `).join('')}
           </div>
-          <button class="cart-del-btn" onclick="removeCartItem(${idx})" title="Удалить">✕</button>
-        </div>
-      `).join('');
+        `;
+      }
+
+      container.innerHTML = html;
     }
 
     function addCustomCartItem() {
       const input = document.getElementById('customCartInput');
       const val = input.value.trim();
       if (!val) return;
-      cart.push({ name: val, checked: false, recipes: [] });
+      cart.push({ name: val, amount: '', checked: false, recipes: [] });
       input.value = '';
       saveCart();
       renderCartList();
@@ -1873,8 +2529,27 @@
 
     function copyCartToClipboard() {
       if (cart.length === 0) return;
-      const text = '🛒 Список покупок:\n' + cart.map(c => `- ${c.name}`).join('\n');
-      navigator.clipboard.writeText(text).then(() => alert('Список скопирован в буфер обмена!'));
+
+      const grouped = {};
+      CATEGORY_ORDER.forEach(cat => grouped[cat] = []);
+      cart.forEach(item => {
+        const aisle = getProductCategory(canonicalizeTag(item.name) || item.name);
+        if (!grouped[aisle]) grouped[aisle] = [];
+        grouped[aisle].push(item);
+      });
+
+      const lines = ['🛒 СПИСОК ПОКУПОК ПО ОТДЕЛАМ:'];
+      for (const aisleName of CATEGORY_ORDER) {
+        const list = grouped[aisleName] || [];
+        if (list.length === 0) continue;
+        lines.push(`\n${aisleName}:`);
+        list.forEach(c => {
+          const checkMark = c.checked ? '☑' : '☐';
+          lines.push(`${checkMark} ${c.name}${c.amount ? ' — ' + c.amount : ''}`);
+        });
+      }
+
+      navigator.clipboard.writeText(lines.join('\n')).then(() => alert('Список покупок по отделам скопирован в буфер обмена!'));
     }
 
     function clearCart() {
@@ -1900,16 +2575,28 @@
 
       const tVal = document.getElementById('fTitle').value.trim();
       const cVal = normalizeRecipeCategory(document.getElementById('fCategory').value);
+      const servVal = Number(document.getElementById('fServings').value) || 1;
       const calVal = Number(document.getElementById('fCalories').value) || 0;
+      const pVal = document.getElementById('fProtein').value.trim();
+      const fVal = document.getElementById('fFat').value.trim();
+      const carbVal = document.getElementById('fCarbs').value.trim();
       const tagsVal = document.getElementById('fTags').value.trim().toLowerCase();
-      const ingsVal = document.getElementById('fIngredients').value.trim();
+      let ingsVal = document.getElementById('fIngredients').value.trim();
       const stepsVal = document.getElementById('fSteps').value.trim();
 
-      // Передаем и английские, и русские ключи, чтобы запись сработала при любой шапке таблицы
+      // Если пользователь указал БЖУ в форме, аккуратно дописываем их в состав, чтобы они сохранились даже без отдельных колонок в таблице
+      if (pVal || fVal || carbVal) {
+        ingsVal += `\n(БЖУ на 1 порцию: Б: ${pVal || 0} г, Ж: ${fVal || 0} г, У: ${carbVal || 0} г)`;
+      }
+
       const payload = {
         title: tVal, 'Название': tVal,
         category: cVal, 'Категория': cVal,
+        servings: servVal, 'Порции': servVal, 'Количество порций': servVal,
         calories: calVal, 'Калории': calVal,
+        protein: pVal, 'Белки': pVal,
+        fat: fVal, 'Жиры': fVal,
+        carbs: carbVal, 'Углеводы': carbVal,
         tags: tagsVal, 'Теги': tagsVal, 'Теги (продукты)': tagsVal,
         ingredients: ingsVal, 'Ингредиенты': ingsVal, 'Ингредиенты (текст)': ingsVal,
         steps: stepsVal, 'Шаги': stepsVal, 'Шаги приготовления': stepsVal
