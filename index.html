@@ -322,18 +322,27 @@
       flex-direction: column;
       gap: 14px;
     }
-    .planner-settings-grid {
+    .planner-settings-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 12px;
       align-items: end;
     }
+    .planner-macros-inputs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      padding: 12px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
     .planner-field label {
       display: block;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 700;
       color: var(--muted);
-      margin-bottom: 5px;
+      margin-bottom: 4px;
     }
     .planner-hint {
       font-size: 0.82rem;
@@ -386,11 +395,13 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
       background: #f8fafc;
       padding: 6px 10px;
       border-radius: 8px;
       border: 1px solid var(--border);
-      font-size: 0.76rem;
+      font-size: 0.75rem;
       font-weight: 700;
     }
 
@@ -762,35 +773,58 @@
     <!-- Правая колонка: Режим 2 — Конструктор рациона -->
     <main class="main-panel" id="plannerView" style="display:none;">
       <div class="planner-controls">
-        <div class="planner-settings-grid">
+        <div style="font-weight:800; font-size:1rem; color:var(--text);">
+          ⚙️ Задайте ваши параметры для расчёта рациона (только то, что вам нужно):
+        </div>
+
+        <!-- Целевые КБЖУ за день (без значений по умолчанию!) -->
+        <div class="planner-macros-inputs">
+          <div class="planner-field">
+            <label>🔥 Калории в день (ккал)</label>
+            <input type="number" id="planTargetKcal" class="search-input" placeholder="Не задано (напр. 1600)" min="500" max="6000" step="50" oninput="onPlannerTargetsInput()">
+          </div>
+          <div class="planner-field">
+            <label>🥩 Белки в день (г)</label>
+            <input type="number" id="planTargetProtein" class="search-input" placeholder="Не задано (напр. 110)" min="10" max="400" step="5" oninput="onPlannerTargetsInput()">
+          </div>
+          <div class="planner-field">
+            <label>🥑 Жиры в день (г)</label>
+            <input type="number" id="planTargetFat" class="search-input" placeholder="Не задано (напр. 55)" min="10" max="300" step="5" oninput="onPlannerTargetsInput()">
+          </div>
+          <div class="planner-field">
+            <label>🍝 Углеводы в день (г)</label>
+            <input type="number" id="planTargetCarbs" class="search-input" placeholder="Не задано (напр. 160)" min="10" max="600" step="5" oninput="onPlannerTargetsInput()">
+          </div>
+        </div>
+
+        <div class="planner-settings-row">
           <div class="planner-field">
             <label>Количество дней</label>
-            <select id="planDaysSelect" class="select-input" onchange="onPlannerSettingsChange()">
+            <select id="planDaysSelect" class="select-input">
+              <option value="" selected disabled>Выберите количество дней...</option>
+              <option value="1">1 день</option>
               <option value="2">2 дня</option>
-              <option value="3" selected>3 дня (оптимально)</option>
+              <option value="3">3 дня</option>
               <option value="4">4 дня</option>
-              <option value="5">5 дней (будни)</option>
-              <option value="7">7 дней (неделя)</option>
+              <option value="5">5 дней</option>
+              <option value="6">6 дней</option>
+              <option value="7">7 дней</option>
             </select>
           </div>
           <div class="planner-field">
             <label>Режим разнообразия продуктов</label>
-            <select id="planVarietySelect" class="select-input" onchange="generateMealPlan(false)">
+            <select id="planVarietySelect" class="select-input" onchange="updateVarietyHint()">
               <option value="strict" selected>1. Экономия (приоритет холодильнику + общие продукты)</option>
               <option value="balanced">2. Баланс (больше разнообразия + совпадения по дням)</option>
               <option value="random">3. Полный рандом (с учётом холодильника)</option>
             </select>
           </div>
-          <div class="planner-field">
-            <label>Цель по калориям в день (ккал)</label>
-            <input type="number" id="planTargetKcal" class="search-input" value="1600" step="50" min="800" max="4500" onchange="onPlannerSettingsChange()">
-          </div>
           <div style="display:flex; gap:8px;">
             <button class="btn btn-primary" style="flex:1; justify-content:center; padding:10px 14px;" onclick="generateMealPlan(false)">
-              🎲 Пересобрать рацион
+              🎲 Собрать / Пересобрать рацион
             </button>
-            <button class="btn" title="Сбросить все закрепления и собрать заново" onclick="generateMealPlan(true)">
-              Сбросить 📌
+            <button class="btn" title="Очистить рацион и сбросить закрепления" onclick="clearMealPlan()">
+              Очистить
             </button>
           </div>
         </div>
@@ -799,7 +833,7 @@
 
       <div class="days-grid" id="plannerDaysContainer"></div>
 
-      <div class="planner-summary-card" id="plannerSummaryContainer"></div>
+      <div class="planner-summary-card" id="plannerSummaryContainer" style="display:none;"></div>
     </main>
   </div>
 
@@ -896,7 +930,7 @@
           </div>
           <div class="form-group">
             <label>На сколько порций рецепт *</label>
-            <input type="number" id="fServings" value="1" min="0.5" step="0.5" required placeholder="2">
+            <input type="number" id="fServings" placeholder="Напр. 2" min="0.5" step="0.5" required>
           </div>
           <div class="form-group">
             <label>Калории (на 1 порцию)</label>
@@ -906,15 +940,15 @@
         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
           <div class="form-group">
             <label>Белки (г на 1 порц.)</label>
-            <input type="number" id="fProtein" placeholder="Авто или число">
+            <input type="number" id="fProtein" placeholder="Необязательно">
           </div>
           <div class="form-group">
             <label>Жиры (г на 1 порц.)</label>
-            <input type="number" id="fFat" placeholder="Авто или число">
+            <input type="number" id="fFat" placeholder="Необязательно">
           </div>
           <div class="form-group">
             <label>Углеводы (г на 1 порц.)</label>
-            <input type="number" id="fCarbs" placeholder="Авто или число">
+            <input type="number" id="fCarbs" placeholder="Необязательно">
           </div>
         </div>
         <div class="form-group">
@@ -960,9 +994,8 @@
       return '';
     }
 
-    // ================= 1. АВТОМАТИЧЕСКИЙ ПОДСЧЁТ БЖУ (БЕЛКИ / ЖИРЫ / УГЛЕВОДЫ) =================
+    // ================= 1. ЧТЕНИЕ ИЛИ РАСЧЁТ БЖУ РЕЦЕПТА =================
     function extractOrEstimateMacros(item, calories, category, canonicalTags, ingredientsText) {
-      // Уровень 1: Ищем прямые колонки в таблице
       const pCol = parseFloat(String(pickField(item, ['protein', 'proteins', 'белки', 'белок', 'б'])).replace(',', '.'));
       const fCol = parseFloat(String(pickField(item, ['fat', 'fats', 'жиры', 'жир', 'ж'])).replace(',', '.'));
       const cCol = parseFloat(String(pickField(item, ['carbs', 'carbohydrates', 'углеводы', 'углевод', 'у'])).replace(',', '.'));
@@ -971,7 +1004,6 @@
         return { p: Math.round(pCol), f: Math.round(fCol), c: Math.round(cCol), isExact: true };
       }
 
-      // Уровень 2: Ищем запись БЖУ внутри текста ингредиентов (например "Б: 24, Ж: 12, У: 35" или "БЖУ 24/12/35")
       const text = String(ingredientsText || '');
       const bjuSlash = text.match(/бжу\s*[:\-=]?\s*(\d+(?:[.,]\d+)?)\s*[\/|\\]\s*(\d+(?:[.,]\d+)?)\s*[\/|\\]\s*(\d+(?:[.,]\d+)?)/i);
       if (bjuSlash) {
@@ -995,10 +1027,10 @@
         };
       }
 
-      // Уровень 3: Умный расчёт БЖУ по калорийности, категории и составу продуктов
-      const kcal = calories > 0 ? calories : 280;
-      let pShare = 0.22, fShare = 0.33, cShare = 0.45;
+      const kcal = calories > 0 ? calories : 0;
+      if (kcal <= 0) return { p: 0, f: 0, c: 0, isExact: false };
 
+      let pShare = 0.22, fShare = 0.33, cShare = 0.45;
       const hasHighProteinTag = canonicalTags.some(t =>
         t.includes('кури') || t.includes('индейк') || t.includes('говяд') || t.includes('фарш') ||
         t.includes('рыба') || t.includes('тунец') || t.includes('горбуша') || t.includes('креветк') ||
@@ -1042,7 +1074,7 @@
     }
 
     // ================= 2. АВТО-ТАЙМЕРЫ В ТЕКСТЕ РЕЦЕПТА + ЗВУКОВОЙ СИГНАЛ =================
-    let activeTimers = {}; // timerId -> { id, label, totalSec, remainSec, intervalId, finished }
+    let activeTimers = {};
     let audioCtx = null;
 
     function playTimerAlarmSound() {
@@ -1052,7 +1084,6 @@
         if (!audioCtx) audioCtx = new AudioContextClass();
         if (audioCtx.state === 'suspended') audioCtx.resume();
 
-        // Мелодичный тройной сигнал кухонного таймера
         const notes = [880, 1174.66, 1396.91, 1760];
         notes.forEach((freq, idx) => {
           const osc = audioCtx.createOscillator();
@@ -1093,10 +1124,6 @@
         .replace(/"/g, '&quot;');
     }
 
-    /**
-     * Находит в тексте шагов фразы времени ("10 минут", "35-40 мин", "1,5 часа", "30 сек")
-     * и добавляет рядом интерактивную кнопку [⏱️ 10 мин]
-     */
     function renderStepsWithTimers(stepsText, recipeTitle) {
       if (!stepsText) return 'Описание шагов отсутствует';
       const safeText = escapeHtml(stepsText);
@@ -1109,7 +1136,6 @@
         const val2 = n2 ? parseFloat(n2.replace(',', '.')) : null;
         if (isNaN(val1) || val1 <= 0) return match;
 
-        // Если указан диапазон (например 35-40 минут), берём верхнюю или среднюю границу
         const targetVal = val2 && !isNaN(val2) ? val2 : val1;
         const u = unitRaw.toLowerCase();
         let seconds = 0;
@@ -1143,7 +1169,6 @@
     }
 
     function toggleInlineTimer(timerId, seconds, label) {
-      // Инициализируем AudioContext по клику пользователя, чтобы браузер разрешил звук
       try {
         const AudioContextClass = window.AudioContext || window.webkitAudioContext;
         if (AudioContextClass && !audioCtx) audioCtx = new AudioContextClass();
@@ -1173,7 +1198,6 @@
           timerObj.finished = true;
           clearInterval(timerObj.intervalId);
           playTimerAlarmSound();
-          // Повторяем сигнал через 1.5 сек для надежности
           setTimeout(() => {
             if (activeTimers[timerId] && activeTimers[timerId].finished) playTimerAlarmSound();
           }, 1500);
@@ -1190,7 +1214,6 @@
       if (t && t.intervalId) clearInterval(t.intervalId);
       delete activeTimers[timerId];
       updateTimerUI();
-      // Если открыто модальное окно рецепта — обновляем кнопки в тексте
       if (currentModalRecipeId) {
         const r = recipes.find(item => item.id === currentModalRecipeId);
         if (r) document.getElementById('mSteps').innerHTML = renderStepsWithTimers(r.steps, r.title);
@@ -1198,7 +1221,6 @@
     }
 
     function updateTimerUI() {
-      // 1. Обновляем кнопки внутри открытого модального окна
       Object.values(activeTimers).forEach(t => {
         const btns = document.querySelectorAll(`[data-timer-id="${t.id}"]`);
         btns.forEach(btn => {
@@ -1207,7 +1229,6 @@
         });
       });
 
-      // 2. Обновляем плавающий виджет в правом нижнем углу
       const container = document.getElementById('floatingTimersContainer');
       const list = Object.values(activeTimers);
       if (list.length === 0) {
@@ -1539,7 +1560,7 @@
         missingPenalty: -1.6,
         randomSpread: 3.5,
         topN: 3,
-        hint: '💡 <strong>Режим 1 (Экономия):</strong> блюда разные, но продукты берутся прежде всего из вашего холодильника и максимально повторяются между днями. Калории, БЖУ и граммовки пересчитываются под вашу порцию автоматически!'
+        hint: '💡 <strong>Режим 1 (Экономия):</strong> укажите нужные вам Калории и/или Белки, Жиры, Углеводы на день и выберите количество дней. Генератор подберет блюда и размер порций строго под заданные вами цели с упором на продукты из холодильника.'
       },
       balanced: {
         sharedWeight: 1.8,
@@ -1547,7 +1568,7 @@
         missingPenalty: -0.4,
         randomSpread: 6.5,
         topN: 6,
-        hint: '💡 <strong>Режим 2 (Больше разнообразия продуктов):</strong> меню включает больше новых ингредиентов, сохраняя совпадения продуктов между днями. Калории, БЖУ и граммовки автоматически масштабируются под порцию!'
+        hint: '💡 <strong>Режим 2 (Баланс):</strong> больше новых и разнообразных продуктов с сохранением пересечений между днями и подбором порций под заданные вами КБЖУ.'
       },
       random: {
         sharedWeight: 0.0,
@@ -1555,7 +1576,7 @@
         missingPenalty: 0.0,
         randomSpread: 16.0,
         topN: 12,
-        hint: '💡 <strong>Режим 3 (Полный рандом с учётом холодильника):</strong> максимальный разброс блюд! При этом БЖУ, граммовки и штуки всех продуктов пересчитываются относительно базового количества порций в таблице.'
+        hint: '💡 <strong>Режим 3 (Полный рандом с учётом холодильника):</strong> свободный выбор блюд с пересчётом порций под те параметры КБЖУ, которые вы заполнили выше.'
       }
     };
 
@@ -1573,12 +1594,9 @@
       document.getElementById('catalogView').style.display = mode === 'catalog' ? 'flex' : 'none';
       document.getElementById('plannerView').style.display = mode === 'planner' ? 'flex' : 'none';
 
-      if (mode === 'planner' && recipes.length > 0) {
-        if (!mealPlan || !mealPlan.days || mealPlan.days.length === 0) {
-          generateMealPlan(false);
-        } else {
-          renderMealPlan();
-        }
+      if (mode === 'planner') {
+        updateVarietyHint();
+        renderMealPlan();
       }
     }
 
@@ -1593,7 +1611,8 @@
     }
 
     function saveMealPlanState() {
-      localStorage.setItem('my_meal_plan', JSON.stringify(mealPlan));
+      if (mealPlan) localStorage.setItem('my_meal_plan', JSON.stringify(mealPlan));
+      else localStorage.removeItem('my_meal_plan');
     }
 
     // Загрузка рецептов из Google Таблицы (GET)
@@ -1629,7 +1648,7 @@
               .filter(Boolean);
 
             const canonicalTags = [...new Set(rawTags.map(canonicalizeTag).filter(Boolean))];
-            const parsedCalories = parseInt(String(calVal).replace(/[^\d]/g, ''), 10) || 280;
+            const parsedCalories = parseInt(String(calVal).replace(/[^\d]/g, ''), 10) || 0;
             const parsedServings = parseFloat(String(servingsVal).replace(',', '.').replace(/[^\d.]/g, '')) || 1;
             const normCat = normalizeRecipeCategory(catVal);
             const macros = extractOrEstimateMacros(item, parsedCalories, normCat, canonicalTags, ingsVal);
@@ -1656,13 +1675,10 @@
         renderFridge();
         renderRecipes();
         saveCart();
+        updateVarietyHint();
 
         if (appMode === 'planner') {
-          if (!mealPlan || !mealPlan.days || mealPlan.days.length === 0) {
-            generateMealPlan(false);
-          } else {
-            renderMealPlan();
-          }
+          renderMealPlan();
         }
       } catch (err) {
         console.error('Ошибка загрузки:', err);
@@ -1672,7 +1688,31 @@
       }
     }
 
-    // ================= ЛОГИКА УМНОГО КОНСТРУКТОРА РАЦИОНА =================
+    // ================= ЛОГИКА УМНОГО КОНСТРУКТОРА РАЦИОНА ПО ЗАДАННЫМ КБЖУ =================
+    function readUserTargetsFromInputs() {
+      const kVal = parseInt(document.getElementById('planTargetKcal').value, 10);
+      const pVal = parseInt(document.getElementById('planTargetProtein').value, 10);
+      const fVal = parseInt(document.getElementById('planTargetFat').value, 10);
+      const cVal = parseInt(document.getElementById('planTargetCarbs').value, 10);
+
+      const targetP = !isNaN(pVal) && pVal > 0 ? pVal : null;
+      const targetF = !isNaN(fVal) && fVal > 0 ? fVal : null;
+      const targetC = !isNaN(cVal) && cVal > 0 ? cVal : null;
+      let targetKcal = !isNaN(kVal) && kVal > 0 ? kVal : null;
+
+      // Если калории не введены, но введены БЖУ, вычисляем эквивалент калорий только из введенных макронутриентов
+      const derivedKcal = (targetP ? targetP * 4 : 0) + (targetF ? targetF * 9 : 0) + (targetC ? targetC * 4 : 0);
+
+      return {
+        kcal: targetKcal,
+        p: targetP,
+        f: targetF,
+        c: targetC,
+        effectiveKcal: targetKcal || (derivedKcal > 0 ? derivedKcal : null),
+        hasAnyTarget: Boolean(targetKcal || targetP || targetF || targetC)
+      };
+    }
+
     function getPoolForSlot(slotKey) {
       const slotDef = MEAL_SLOTS.find(s => s.key === slotKey);
       let pool = recipes.filter(r => slotDef.preferredCats.includes(r.category));
@@ -1682,57 +1722,70 @@
       return pool;
     }
 
-    function pickBestPortion(recipeKcalPerServing, targetSlotKcal, slotKey) {
-      if (!recipeKcalPerServing || recipeKcalPerServing <= 0) return 1;
+    /**
+     * Подбирает оптимальный размер порции блюда с учётом всех заданных пользователем целей (Ккал, Б, Ж, У)
+     */
+    function pickBestPortionForTargets(r, slotRatio, targets, slotKey) {
+      if (!targets || !targets.hasAnyTarget) return 1;
+
       const allowedSteps = slotKey === 'snack'
         ? [0.25, 0.5, 0.75, 1]
         : [0.5, 0.75, 1, 1.5, 2];
 
       let bestStep = 1;
-      let minDiff = Infinity;
+      let minLoss = Infinity;
+
       for (const step of allowedSteps) {
-        const diff = Math.abs(recipeKcalPerServing * step - targetSlotKcal);
-        if (diff < minDiff) {
-          minDiff = diff;
+        let loss = 0;
+        if (targets.effectiveKcal && r.calories > 0) {
+          const slotTargetK = targets.effectiveKcal * slotRatio;
+          loss += Math.abs((r.calories * step) - slotTargetK) / Math.max(100, slotTargetK);
+        }
+        if (targets.p && r.protein > 0) {
+          const slotTargetP = targets.p * slotRatio;
+          loss += Math.abs((r.protein * step) - slotTargetP) / Math.max(10, slotTargetP) * 1.2;
+        }
+        if (targets.f && r.fat > 0) {
+          const slotTargetF = targets.f * slotRatio;
+          loss += Math.abs((r.fat * step) - slotTargetF) / Math.max(8, slotTargetF);
+        }
+        if (targets.c && r.carbs > 0) {
+          const slotTargetC = targets.c * slotRatio;
+          loss += Math.abs((r.carbs * step) - slotTargetC) / Math.max(15, slotTargetC);
+        }
+
+        if (loss < minLoss) {
+          minLoss = loss;
           bestStep = step;
         }
       }
       return bestStep;
     }
 
-    function onPlannerSettingsChange() {
-      const daysCount = Number(document.getElementById('planDaysSelect').value) || 3;
-      const targetKcal = Number(document.getElementById('planTargetKcal').value) || 1600;
-      const varietyMode = document.getElementById('planVarietySelect').value || 'strict';
+    function onPlannerTargetsInput() {
+      if (!mealPlan || !mealPlan.days || mealPlan.days.length === 0) return;
+      const targets = readUserTargetsFromInputs();
+      mealPlan.targets = targets;
 
-      if (!mealPlan || !mealPlan.days) {
-        generateMealPlan(false);
-        return;
-      }
-
-      mealPlan.targetKcal = targetKcal;
-      mealPlan.varietyMode = varietyMode;
-
-      if (mealPlan.days.length !== daysCount) {
-        generateMealPlan(false);
-      } else {
+      // Пересчитываем порции незакреплённых блюд под обновлённые пользователем КБЖУ
+      if (targets.hasAnyTarget) {
         mealPlan.days.forEach(day => {
           MEAL_SLOTS.forEach(slot => {
             const cell = day.meals[slot.key];
             if (cell && !cell.pinned) {
               const r = recipes.find(x => x.id === cell.recipeId);
               if (r) {
-                cell.portion = pickBestPortion(r.calories, targetKcal * slot.ratio, slot.key);
+                cell.portion = pickBestPortionForTargets(r, slot.ratio, targets, slot.key);
               }
             }
           });
         });
-        saveMealPlanState();
-        renderMealPlan();
       }
+      saveMealPlanState();
+      renderMealPlan();
     }
 
-    function scoreCandidateRecipe(r, slotKey, targetSlotKcal, planIngredients, usedRecipeCounts, prevDayRecipeId, poolLength, modeCfg) {
+    function scoreCandidateRecipe(r, slot, targets, planIngredients, usedRecipeCounts, prevDayRecipeId, poolLength, modeCfg) {
       let score = 0;
 
       r.tags.forEach(t => {
@@ -1748,9 +1801,27 @@
       if (r.id === prevDayRecipeId && poolLength > 1) score -= 30;
       score -= timesUsed * 10;
 
-      const bestPortion = pickBestPortion(r.calories, targetSlotKcal, slotKey);
-      const kcalDiff = Math.abs((r.calories * bestPortion) - targetSlotKcal);
-      score -= (kcalDiff / 130);
+      const bestPortion = pickBestPortionForTargets(r, slot.ratio, targets, slot.key);
+
+      // Учитываем близость блюда к заданным пользователем целям (Ккал, Белки, Жиры, Углеводы)
+      if (targets && targets.hasAnyTarget) {
+        if (targets.effectiveKcal && r.calories > 0) {
+          const kcalDiff = Math.abs((r.calories * bestPortion) - (targets.effectiveKcal * slot.ratio));
+          score -= (kcalDiff / 120);
+        }
+        if (targets.p) {
+          const pDiff = Math.abs((r.protein * bestPortion) - (targets.p * slot.ratio));
+          score -= (pDiff / 6);
+        }
+        if (targets.f) {
+          const fDiff = Math.abs((r.fat * bestPortion) - (targets.f * slot.ratio));
+          score -= (fDiff / 6);
+        }
+        if (targets.c) {
+          const cDiff = Math.abs((r.carbs * bestPortion) - (targets.c * slot.ratio));
+          score -= (cDiff / 10);
+        }
+      }
 
       score += Math.random() * modeCfg.randomSpread;
 
@@ -1760,8 +1831,14 @@
     function generateMealPlan(resetPins = false) {
       if (recipes.length === 0) return;
 
-      const daysCount = Number(document.getElementById('planDaysSelect').value) || 3;
-      const targetKcal = Number(document.getElementById('planTargetKcal').value) || 1600;
+      const daysVal = parseInt(document.getElementById('planDaysSelect').value, 10);
+      if (isNaN(daysVal) || daysVal <= 0) {
+        alert('Пожалуйста, выберите количество дней для рациона.');
+        document.getElementById('planDaysSelect').focus();
+        return;
+      }
+
+      const targets = readUserTargetsFromInputs();
       const varietyMode = document.getElementById('planVarietySelect').value || 'strict';
       const modeCfg = VARIETY_MODES[varietyMode] || VARIETY_MODES.strict;
 
@@ -1771,7 +1848,7 @@
       const usedRecipeCounts = {};
 
       const newDays = [];
-      for (let d = 0; d < daysCount; d++) {
+      for (let d = 0; d < daysVal; d++) {
         const existingDay = (!resetPins && mealPlan && mealPlan.days && mealPlan.days[d]) ? mealPlan.days[d] : null;
         const mealsObj = {};
 
@@ -1792,7 +1869,7 @@
         newDays.push({ dayNumber: d + 1, meals: mealsObj });
       }
 
-      for (let d = 0; d < daysCount; d++) {
+      for (let d = 0; d < daysVal; d++) {
         const prevDay = d > 0 ? newDays[d - 1] : null;
 
         MEAL_SLOTS.forEach(slot => {
@@ -1801,11 +1878,10 @@
           const pool = getPoolForSlot(slot.key);
           if (pool.length === 0) return;
 
-          const targetSlotKcal = targetKcal * slot.ratio;
           const prevDayRecipeId = prevDay && prevDay.meals[slot.key] ? prevDay.meals[slot.key].recipeId : null;
 
           const scored = pool.map(r =>
-            scoreCandidateRecipe(r, slot.key, targetSlotKcal, planIngredients, usedRecipeCounts, prevDayRecipeId, pool.length, modeCfg)
+            scoreCandidateRecipe(r, slot, targets, planIngredients, usedRecipeCounts, prevDayRecipeId, pool.length, modeCfg)
           );
 
           scored.sort((a, b) => b.score - a.score);
@@ -1824,13 +1900,24 @@
       }
 
       mealPlan = {
-        daysCount,
-        targetKcal,
+        daysCount: daysVal,
+        targets,
         varietyMode,
         days: newDays
       };
 
       saveMealPlanState();
+      renderMealPlan();
+    }
+
+    function clearMealPlan() {
+      mealPlan = null;
+      saveMealPlanState();
+      document.getElementById('planTargetKcal').value = '';
+      document.getElementById('planTargetProtein').value = '';
+      document.getElementById('planTargetFat').value = '';
+      document.getElementById('planTargetCarbs').value = '';
+      document.getElementById('planDaysSelect').value = '';
       renderMealPlan();
     }
 
@@ -1843,6 +1930,7 @@
 
       const varietyMode = document.getElementById('planVarietySelect').value || mealPlan.varietyMode || 'strict';
       const modeCfg = VARIETY_MODES[varietyMode] || VARIETY_MODES.strict;
+      const targets = readUserTargetsFromInputs();
 
       const otherPlanIngs = new Set();
       const usedRecipeCounts = {};
@@ -1860,10 +1948,9 @@
 
       const candidates = pool.filter(r => r.id !== (currentCell ? currentCell.recipeId : null));
       const finalPool = candidates.length > 0 ? candidates : pool;
-      const targetSlotKcal = (mealPlan.targetKcal || 1600) * slotDef.ratio;
 
       const scored = finalPool.map(r =>
-        scoreCandidateRecipe(r, slotKey, targetSlotKcal, otherPlanIngs, usedRecipeCounts, null, finalPool.length, modeCfg)
+        scoreCandidateRecipe(r, slotDef, targets, otherPlanIngs, usedRecipeCounts, null, finalPool.length, modeCfg)
       );
 
       scored.sort((a, b) => b.score - a.score);
@@ -1915,18 +2002,34 @@
     }
 
     function renderMealPlan() {
-      if (!mealPlan || !mealPlan.days) return;
+      const daysContainer = document.getElementById('plannerDaysContainer');
+      const summaryEl = document.getElementById('plannerSummaryContainer');
 
+      if (!mealPlan || !mealPlan.days || mealPlan.days.length === 0) {
+        daysContainer.innerHTML = `
+          <div class="loader" style="grid-column: 1 / -1; background: var(--card); border-radius: var(--radius); border: 1px dashed var(--border);">
+            👆 Введите желаемые ориентиры по <strong>Калориям, Белкам, Жирам или Углеводам</strong> выше, выберите количество дней и нажмите <strong>«🎲 Собрать / Пересобрать рацион»</strong>.
+          </div>
+        `;
+        summaryEl.style.display = 'none';
+        return;
+      }
+
+      summaryEl.style.display = 'flex';
       document.getElementById('planDaysSelect').value = String(mealPlan.days.length);
-      document.getElementById('planTargetKcal').value = String(mealPlan.targetKcal || 1600);
+
+      const t = mealPlan.targets || {};
+      if (t.kcal && !document.getElementById('planTargetKcal').value) document.getElementById('planTargetKcal').value = t.kcal;
+      if (t.p && !document.getElementById('planTargetProtein').value) document.getElementById('planTargetProtein').value = t.p;
+      if (t.f && !document.getElementById('planTargetFat').value) document.getElementById('planTargetFat').value = t.f;
+      if (t.c && !document.getElementById('planTargetCarbs').value) document.getElementById('planTargetCarbs').value = t.c;
+
       if (mealPlan.varietyMode) {
         document.getElementById('planVarietySelect').value = mealPlan.varietyMode;
       }
       updateVarietyHint();
 
-      const daysContainer = document.getElementById('plannerDaysContainer');
-      const targetKcal = mealPlan.targetKcal || 1600;
-
+      const liveTargets = readUserTargetsFromInputs();
       const ingUsageMap = {};
 
       const daysHTML = mealPlan.days.map((day, dIdx) => {
@@ -1962,14 +2065,14 @@
 
           const scaledIngsText = scaleIngredientsText(r.ingredients, r.servings, portion);
 
-          r.tags.forEach(t => {
-            if (!ingUsageMap[t]) ingUsageMap[t] = { count: 0, units: {}, recipes: new Set() };
-            ingUsageMap[t].count += 1;
-            ingUsageMap[t].recipes.add(`${r.title} (${formatPortionLabel(portion)})`);
+          r.tags.forEach(tag => {
+            if (!ingUsageMap[tag]) ingUsageMap[tag] = { count: 0, units: {}, recipes: new Set() };
+            ingUsageMap[tag].count += 1;
+            ingUsageMap[tag].recipes.add(`${r.title} (${formatPortionLabel(portion)})`);
 
-            const parsedAmt = extractIngredientAmountForTag(r.ingredients, t, r.servings, portion);
+            const parsedAmt = extractIngredientAmountForTag(r.ingredients, tag, r.servings, portion);
             if (parsedAmt) {
-              ingUsageMap[t].units[parsedAmt.unit] = (ingUsageMap[t].units[parsedAmt.unit] || 0) + parsedAmt.amount;
+              ingUsageMap[tag].units[parsedAmt.unit] = (ingUsageMap[tag].units[parsedAmt.unit] || 0) + parsedAmt.amount;
             }
           });
 
@@ -2009,24 +2112,30 @@
           `;
         }).join('');
 
-        const diff = Math.abs(dayTotalKcal - targetKcal);
-        const kcalClass = diff <= 200 ? 'kcal-ok' : 'kcal-warn';
+        const targetKcalToShow = liveTargets.kcal || liveTargets.effectiveKcal;
+        const kcalBadgeText = targetKcalToShow
+          ? `🔥 ${dayTotalKcal} / ${targetKcalToShow} ккал`
+          : `🔥 ${dayTotalKcal} ккал`;
+        const kcalDiff = targetKcalToShow ? Math.abs(dayTotalKcal - targetKcalToShow) : 0;
+        const kcalClass = (!targetKcalToShow || kcalDiff <= 220) ? 'kcal-ok' : 'kcal-warn';
+
+        const pText = liveTargets.p ? `Б: ${dayTotalP} / ${liveTargets.p} г` : `Б: ${dayTotalP} г`;
+        const fText = liveTargets.f ? `Ж: ${dayTotalF} / ${liveTargets.f} г` : `Ж: ${dayTotalF} г`;
+        const cText = liveTargets.c ? `У: ${dayTotalC} / ${liveTargets.c} г` : `У: ${dayTotalC} г`;
 
         return `
           <div class="day-card">
             <div class="day-header">
               <div class="day-header-top">
                 <span class="day-title">День ${day.dayNumber}</span>
-                <span class="day-kcal-badge ${kcalClass}">
-                  🔥 ${dayTotalKcal} / ${targetKcal} ккал
-                </span>
+                <span class="day-kcal-badge ${kcalClass}">${kcalBadgeText}</span>
               </div>
               <div class="day-macros-bar">
-                <span>Суточное БЖУ:</span>
+                <span>Итого БЖУ:</span>
                 <div class="macro-pills">
-                  <span class="macro-pill macro-p">Белки: ${dayTotalP} г</span>
-                  <span class="macro-pill macro-f">Жиры: ${dayTotalF} г</span>
-                  <span class="macro-pill macro-c">Углеводы: ${dayTotalC} г</span>
+                  <span class="macro-pill macro-p">${pText}</span>
+                  <span class="macro-pill macro-f">${fText}</span>
+                  <span class="macro-pill macro-c">${cText}</span>
                 </div>
               </div>
             </div>
@@ -2038,11 +2147,10 @@
       daysContainer.innerHTML = daysHTML;
 
       const allPlanTags = Object.keys(ingUsageMap).sort((a, b) => ingUsageMap[b].count - ingUsageMap[a].count);
-      const missingTags = allPlanTags.filter(t => !fridge.has(t));
-      const haveTags = allPlanTags.filter(t => fridge.has(t));
-      const sharedCount = allPlanTags.filter(t => ingUsageMap[t].count >= 2).length;
+      const missingTags = allPlanTags.filter(tag => !fridge.has(tag));
+      const haveTags = allPlanTags.filter(tag => fridge.has(tag));
+      const sharedCount = allPlanTags.filter(tag => ingUsageMap[tag].count >= 2).length;
 
-      const summaryEl = document.getElementById('plannerSummaryContainer');
       summaryEl.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
           <div>
@@ -2062,9 +2170,9 @@
           <div>
             <h4 style="font-size:0.85rem; color:#991b1b; margin-bottom:8px; text-transform:uppercase;">Нужно докупить (${missingTags.length}):</h4>
             <div class="summary-ing-grid">
-              ${missingTags.map(t => `
-                <span class="summary-chip tag-miss" onclick="toggleIngredient('${t.replace(/'/g, "\\'")}')" title="Нужно для: ${[...ingUsageMap[t].recipes].join(', ')}">
-                  + ${t} <span class="summary-chip-amount">${formatAggregatedAmounts(ingUsageMap[t].units, ingUsageMap[t].count)}</span>
+              ${missingTags.map(tag => `
+                <span class="summary-chip tag-miss" onclick="toggleIngredient('${tag.replace(/'/g, "\\'")}')" title="Нужно для: ${[...ingUsageMap[tag].recipes].join(', ')}">
+                  + ${tag} <span class="summary-chip-amount">${formatAggregatedAmounts(ingUsageMap[tag].units, ingUsageMap[tag].count)}</span>
                 </span>
               `).join('')}
             </div>
@@ -2075,9 +2183,9 @@
           <div>
             <h4 style="font-size:0.85rem; color:#065f46; margin-bottom:8px; text-transform:uppercase;">Уже есть в холодильнике (${haveTags.length}):</h4>
             <div class="summary-ing-grid">
-              ${haveTags.map(t => `
-                <span class="summary-chip tag-have" onclick="toggleIngredient('${t.replace(/'/g, "\\'")}')" title="Нужно для: ${[...ingUsageMap[t].recipes].join(', ')}">
-                  ✓ ${t} <span class="summary-chip-amount">${formatAggregatedAmounts(ingUsageMap[t].units, ingUsageMap[t].count)}</span>
+              ${haveTags.map(tag => `
+                <span class="summary-chip tag-have" onclick="toggleIngredient('${tag.replace(/'/g, "\\'")}')" title="Нужно для: ${[...ingUsageMap[tag].recipes].join(', ')}">
+                  ✓ ${tag} <span class="summary-chip-amount">${formatAggregatedAmounts(ingUsageMap[tag].units, ingUsageMap[tag].count)}</span>
                 </span>
               `).join('')}
             </div>
@@ -2376,9 +2484,6 @@
           <span class="macro-pill macro-p">Белки: ${totalP} г</span>
           <span class="macro-pill macro-f">Жиры: ${totalF} г</span>
           <span class="macro-pill macro-c">Углеводы: ${totalC} г</span>
-          <span style="font-size:0.75rem; color:var(--muted); align-self:center;">
-            (${r.macrosExact ? 'точные данные из рецепта' : 'авторасчёт по составу'})
-          </span>
         </div>
       `;
 
@@ -2446,7 +2551,6 @@
         return;
       }
 
-      // Группируем товары по отделам супермаркета
       const grouped = {};
       CATEGORY_ORDER.forEach(cat => grouped[cat] = []);
 
@@ -2584,7 +2688,6 @@
       let ingsVal = document.getElementById('fIngredients').value.trim();
       const stepsVal = document.getElementById('fSteps').value.trim();
 
-      // Если пользователь указал БЖУ в форме, аккуратно дописываем их в состав, чтобы они сохранились даже без отдельных колонок в таблице
       if (pVal || fVal || carbVal) {
         ingsVal += `\n(БЖУ на 1 порцию: Б: ${pVal || 0} г, Ж: ${fVal || 0} г, У: ${carbVal || 0} г)`;
       }
